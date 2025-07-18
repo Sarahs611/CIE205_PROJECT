@@ -76,7 +76,7 @@ Chief* Restaurant::getReadyChief(char chiefType) {
 }
 
 void Restaurant::addChiefToBreak(Chief* Chief){
-     char type = Chief->getCheifType(); 
+     char type = Chief->get_chief_specialization(); 
   if (type == 'N') {
       InBreakN.enqueue(Chief);
         }
@@ -100,4 +100,55 @@ void Restaurant::printInBreakChiefs() const{
 
     cout << "In-Break VIP Chiefs"; InBreakVIP.Print();
 }
+
+bool Restaurant::CancelOrder(int id)
+{
+    LinkedQueue<Order*> tempQueue;
+    Order* currentOrder = nullptr;
+    bool found = false;
+
+    while (!this->isEmpty()) {
+        this->dequeue(currentOrder);
+
+        if (currentOrder->getOrderID() == id) {
+            found = true;
+            continue;
+        }
+
+        tempQueue.enqueue(currentOrder);
+    }
+    while (!tempQueue.isEmpty()) {
+        tempQueue.dequeue(currentOrder);
+        this->enqueue(currentOrder);
+    }
+    return found;
+}
+
+Order* Restaurant::GetOrder(int id)
+{
+    LinkedQueue<Order*> tempQueue;
+    Order* currentOrder = nullptr;
+    Order* foundOrder = nullptr;
+
+    while (!this->isEmpty()) {
+        this->dequeue(currentOrder);
+
+        if (currentOrder->getOrderID() == id) {
+            foundOrder = currentOrder;
+        }
+
+        tempQueue.enqueue(currentOrder);
+    }
+    while (!tempQueue.isEmpty()) {
+        tempQueue.dequeue(currentOrder);
+        this->enqueue(currentOrder);
+    }
+    return foundOrder;
+}
+
+
+
+
+
+
 

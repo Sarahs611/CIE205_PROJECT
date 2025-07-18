@@ -7,6 +7,7 @@
 class Restaurant
 {
 private:
+	//Sarah
 	LinkedQueue<Event*> EventsList;
 
 	priQueue<Order*> VIPWaitList;
@@ -15,6 +16,10 @@ private:
 	LinkedQueue<Chief*> InBreakG;
 	LinkedQueue<Chief*> InBreakVIP;
 
+
+	//Nouran
+    LinkedQueue<Order*> N_waitlist;
+    
 public:
 	Event* getNextEvent();
 	void addEvent(Event* newEvent);
@@ -37,5 +42,19 @@ public:
 	void addChiefToBreak(Chief* pChief);
 	int  countInBreakChiefs()const ;
 	void printInBreakChiefs()const;
+
+
+	// nouran
+
+	bool CancelOrder(int id);
+
+	Order* GetOrder(int id);
+
+
+
+
+
+
+
 };
 

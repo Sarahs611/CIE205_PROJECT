@@ -12,9 +12,9 @@ double Order::getPrice() const {
 	return price;
 }
 
-int Order::getSize() const
+int Order::getOrderSize() const
 {
-	return size;
+	return Ordersize;
 }
 
 int Order::getPriority() const {
@@ -27,11 +27,15 @@ int Order::getRequestT() const
 
 void Order::calcPriority()
 {
-	priority = (price / size) + (100 - requestT);
+	priority = (price / Ordersize) + (100 - requestT);
 
 }
 
 void Order::print() const {
-    cout << "OrderID: " << OrderID<< ", Type: " << OrderType
-        << ", Price: $" << price<< ", Priority: " << priority;
+	cout << "OrderID: " << OrderID << ", Order Type: " << OrderType
+		<< ", Price: $" << price << ", Order Size: " << Ordersize
+		<<"Requested time"<<requestT;
 }
+
+
+

@@ -56,7 +56,7 @@ void Cancel::print() const
 
 void Cancel::Execute(Restaurant* Rest)
 {
-    Rest->cancelOrder(orderID);
+    Rest->CancelOrder(orderID);
 }
 
 void Promotion::print() const
