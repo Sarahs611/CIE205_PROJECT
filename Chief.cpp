@@ -2,44 +2,51 @@
 #include <iostream>
 using namespace std;
 
-int Chief::getCheifID() const
+
+int Chief::getChiefID()const
 {
-    return C_ID;
+	return Chief_ID;
 }
-string Chief::get_name()const
-{
-	return name;
-}
-char Chief::get_chief_specialization()const
+char Chief::getchiefspecialization()const
 {
 	return chief_specialization;
 }
-int Chief::get_speed()const
+int Chief::getspeed()const
 {
 	return speed;
 }
-int Chief::get_break_duration()const
+int Chief::getordersbeforebreak()const
+{
+	return orders_before_break;
+}
+
+int Chief::getbreakduration()const
 {
 	return break_duration;
 }
-void Chief::set_name(string n)
+
+void Chief::setChiefID(int id)
 {
-	name = n;
+	Chief_ID = id;
 }
-void Chief::set_chief_specialization(char t)
+void Chief::setchiefspecialization(char t)
 {
 	chief_specialization = t;
 }
-void Chief::set_speed(int s)
+void Chief::setspeed(int s)
 {
 	speed = s;
 }
-void Chief::set_break_duration(int d)
+void Chief::ordersbeforebreak(int bb)
+{
+	orders_before_break = bb;
+}
+void Chief::setbreakduration(int d)
 {
 	break_duration = d;
 }
 
 void Chief::print() const {
-	cout << "Cheif name " << name<< ", Cheif specialization: " << chief_specialization 
-		<< ", Chief ID: " << C_ID;
+	cout << "Cheif Id" << Chief_ID << ", Cheif specialization: " << chief_specialization
+		<< ", Chief speed: " << speed << "orders before break" << orders_before_break << ",break duration" << break_duration << endl;
 }

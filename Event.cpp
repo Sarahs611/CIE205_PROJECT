@@ -39,13 +39,13 @@ void Arrival::print() const
 
 void Arrival::Execute(Restaurant* Rest)
 {
-    Order* newOrder = new Order(orderID, orderType, price,size);
+    Order* newOrder = new Order();
 
-    /*if (orderType == 'N')
-        Rest->addToNormalWait(newOrder);
-    else if (orderType == 'G')
-        Rest->addToVeganWait(newOrder);*/
-    /*else*/ if (orderType == 'V')
+  /*  if (orderType == 'N')
+        Rest->GetNormalOrder(newOrder);
+    else*/ if (orderType == 'G')
+        Rest->Insert_vegan_order(newOrder);
+    else if (orderType == 'V')
         Rest->addToVIPWait(newOrder);
 }
 

@@ -1,24 +1,36 @@
 #pragma once
+#include <iostream>
 using namespace std;
+
 class Chief
 {
 private:
-	string name;
+	int Chief_ID;
 	char chief_specialization;
-	int C_ID;
 	int speed;
+	int orders_before_break;
 	int break_duration;
-   
+	bool available;
+
 public:
-	string get_name()const;
-	char get_chief_specialization()const;
-	int get_speed()const;
-	int get_break_duration()const;
-	void set_name(string n);
-	void set_chief_specialization(char t);
-	void set_speed(int s);
-	void set_break_duration(int d);
-	int getCheifID() const;
-	void print() const;
+	Chief();
+	Chief(int id, char type, int spd, int ordersBeforeBreak, int breakTime) {
+		Chief_ID = id;
+		chief_specialization = type;
+		speed = spd;
+		orders_before_break = ordersBeforeBreak;
+		break_duration = breakTime;
+	}
+	int  getChiefID()const;
+	char getchiefspecialization()const;
+	int  getspeed()const;
+	int  getordersbeforebreak()const;
+	int  getbreakduration()const;
+	void setChiefID(int id);
+	void setchiefspecialization(char t);
+	void setspeed(int s);
+	void ordersbeforebreak(int b);
+	void setbreakduration(int d);
+	void print()const;
 };
 
