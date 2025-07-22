@@ -454,38 +454,45 @@ void Restaurant::print_All() const {
 
 //delivered Orders
 bool Restaurant::push(Order * order) {
-    if (DeliveredOrders.isEmpty()==false) return false;
-    DeliveredOrders[++top] = order;
+    return DeliveredOrders.push(order);
+}
+
+bool Restaurant::pop(Order*& order) {
+    if (DeliveredOrders.isEmpty())
+        return false;
+    DeliveredOrders.pop(order);
     return true;
 }
 
-bool  Restaurant::pop(Order*& order) {
-    if (isEmpty()) return false;
-    order = DeliveredOrders[top--];
+bool Restaurant::peek(Order*& order) const {
+    if (DeliveredOrders.isEmpty())
+        return false;
+    DeliveredOrders.peek(order); 
     return true;
 }
 
-bool  Restaurant::peek(Order*& order) const {
-    if (isEmpty()) return false;
-    order = DeliveredOrders[top];
-    return true;
-}
-
-void Restaurant::printAll() const {
-    if (isEmpty()) {
-        cout << "No delivered orders.\n";
-        return;
+void Restaurant::printAll(ArrayStack<Order*>& DeliveredOrders)  {
+      if (DeliveredOrders.isEmpty()) {
+            cout << "No delivered orders.\n";
+            return;
+        }
+        ArrayStack<Order*> tempStack;
+        Order* tempOrder;
+        cout << "Delivered Orders (Most recent first):\n";
+        while (!DeliveredOrders.isEmpty()) {
+            DeliveredOrders.pop(tempOrder);
+            cout << "FT: " << tempOrder->getFinishT()
+                << " | ID: " << tempOrder->getOrderID()
+                << " | RT: " << tempOrder->getRequestT()
+                << " | WT: " << tempOrder->getWaitingT()
+                << " | ST: " << tempOrder->getServeT() << "\n";
+            tempStack.push(tempOrder);
+        }
+        while (!tempStack.isEmpty()) {
+            tempStack.pop(tempOrder);
+            DeliveredOrders.push(tempOrder);
+        }
     }
-    cout << "Delivered Orders (Most recent first):\n";
-    for (int i = top; i >= 0; i--) {
-        cout << "FT: " << DeliveredOrders[i]->get_FT()
-            << " | ID: " << DeliveredOrders[i]->get_orderID()
-            << " | RT: " << DeliveredOrders[i]->get_RT()
-            << " | WT: " << DeliveredOrders[i]->get_WT()
-            << " | ST: " << DeliveredOrders[i]->get_ST() << "\n";
-    }
-}
-
 
 
 

@@ -36,6 +36,16 @@ int Order::get_assign_chief()const
 	return  assign_chief->getChiefID();
 }
 
+int Order::getWaitingT() const
+{
+	return waitT;
+}
+
+int Order::getServeT() const
+{
+	return serveT;
+}
+
 
 void Order::setOrderID(int id) {
 	OrderID = id;
@@ -68,6 +78,16 @@ void Order::setFinishT(int FT) {
 void Order::set_assign_chief(Chief* ch)
 {
 	assign_chief = ch;
+}
+
+void Order::setWaititngT(int t)
+{
+	waitT = t;
+}
+
+void Order::setServeT(int t)
+{
+	serveT = t;
 }
 
 

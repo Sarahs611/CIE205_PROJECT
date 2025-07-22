@@ -27,7 +27,7 @@ int Chief::getbreakduration()const
 
 bool Chief::get_available() const
 {
-	return true;
+	return available;
 }
 
 void Chief::setChiefID(int id)

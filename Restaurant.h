@@ -82,7 +82,7 @@ public:
 	bool push(Order* order);
 	bool pop(Order*& order);
 	bool peek(Order*& order) const;
-	void printAll() const;
+	void printAll() ;
 	
 };
 

@@ -6,7 +6,8 @@ class Order
 private:
 	int OrderID; char OrderType; double price;
 	int Ordersize; int priority;
-	int requestT; int FinishT;
+	int requestT; int FinishT; 
+	int waitT; int serveT;
 	Chief* assign_chief;
 
 
@@ -19,6 +20,9 @@ public:
 	int getRequestT() const;
 	int getFinishT()const;
 	int get_assign_chief()const;
+	int getWaitingT() const;
+	int getServeT() const;
+
 
 	void setOrderID(int id);
 	void setOrderType(char type);
@@ -28,6 +32,8 @@ public:
 	void setRequestT(int RT);
 	void setFinishT(int FT);
 	void set_assign_chief(Chief* ch);
+	void setWaititngT(int t);
+	void setServeT(int t);
 
 
 	void calcPriority();
