@@ -41,9 +41,9 @@ void Arrival::Execute(Restaurant* Rest)
 {
     Order* newOrder = new Order();
 
-  /*  if (orderType == 'N')
-        Rest->GetNormalOrder(newOrder);
-    else*/ if (orderType == 'G')
+    if (orderType == 'N')
+        Rest->addNormalOrder(newOrder);
+    else if (orderType == 'G')
         Rest->Insert_vegan_order(newOrder);
     else if (orderType == 'V')
         Rest->addToVIPWait(newOrder);

@@ -75,14 +75,15 @@ public:
     // basmala
 	bool addChef(Chief* chef);
 	bool getNextChef(Chief* chef);
-	void print_All() const;
+	void printAllVIPChiefs() const;
 	bool peekNextChef(Chief* chef) const;
 	bool isEmpty() const;
 
 	bool push(Order* order);
 	bool pop(Order*& order);
 	bool peek(Order*& order) const;
-	void printAll() ;
+	void printAll_delivered_order(ArrayStack<Order*>& DeliveredOrders);
+
 	
 };
 

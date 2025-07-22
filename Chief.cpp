@@ -3,6 +3,16 @@
 using namespace std;
 
 
+Chief::Chief()
+{
+	Chief_ID = -1;                
+	chief_specialization = 'N';  
+	speed = 0;
+	orders_before_break = 0;
+	break_duration = 0;
+	available = true;
+}
+
 int Chief::getChiefID()const
 {
 	return Chief_ID;

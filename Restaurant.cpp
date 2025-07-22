@@ -395,17 +395,18 @@ bool Restaurant::Insert_order(Order* O)
     In_service_orders.enqueue(O, O->getFinishT());
     return true;
 }
+
 bool Restaurant::Remove_done_order_from_Inservice(int current_time)
 {
     priQueue<Order*>temp;
     Order* O;
     int ft;
-    bool Removed = false;
+    bool removed = false;
     while (In_service_orders.dequeue(O, ft))
     {
         if (O->getFinishT() <= current_time)
         {
-            Removed = true;
+            removed = true;
             continue;
         }
         temp.enqueue(O, ft);
@@ -414,7 +415,7 @@ bool Restaurant::Remove_done_order_from_Inservice(int current_time)
     {
         In_service_orders.enqueue(O, ft);
     }
-    return Removed;
+    return removed;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -437,7 +438,7 @@ bool Restaurant::peekNextChef(Chief* chef) const {
     return VIPChiefs.peek(chef);
 }
 
-void Restaurant::print_All() const {
+void Restaurant::printAllVIPChiefs() const {
     if (VIPChiefs.isEmpty()) {
         cout << "No VIP chefs available.\n";
         return;
@@ -471,7 +472,7 @@ bool Restaurant::peek(Order*& order) const {
     return true;
 }
 
-void Restaurant::printAll(ArrayStack<Order*>& DeliveredOrders)  {
+void Restaurant::printAll_delivered_order(ArrayStack<Order*>& DeliveredOrders)  {
       if (DeliveredOrders.isEmpty()) {
             cout << "No delivered orders.\n";
             return;
