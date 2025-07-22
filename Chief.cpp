@@ -25,6 +25,11 @@ int Chief::getbreakduration()const
 	return break_duration;
 }
 
+bool Chief::get_available() const
+{
+	return true;
+}
+
 void Chief::setChiefID(int id)
 {
 	Chief_ID = id;
@@ -45,8 +50,11 @@ void Chief::setbreakduration(int d)
 {
 	break_duration = d;
 }
+void Chief::set_available(bool a) {
+	available = a;
+}
 
 void Chief::print() const {
-	cout << "Cheif Id" << Chief_ID << ", Cheif specialization: " << chief_specialization
-		<< ", Chief speed: " << speed << "orders before break" << orders_before_break << ",break duration" << break_duration << endl;
+	cout << "Cheif Id" << getChiefID() << ", Cheif specialization: " << getchiefspecialization()
+		<< ", Chief speed: " << getspeed() << "orders before break" << getordersbeforebreak() << ",break duration" << getbreakduration() << endl;
 }

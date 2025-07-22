@@ -11,4 +11,6 @@ using namespace std;
 
 int main() {
 	cout << " Welcome ^_^ ";
+	Restaurant r;
+	r.LoadInputFile("input.txt");
 }

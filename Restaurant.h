@@ -63,19 +63,21 @@ public:
 	bool Insert_vegan_order(Order* vo);
 	bool Remove_vegan_order(Order* vo);
 	bool Searchfor_vegan_order(Order* vo);
-	Order* get_next_vegan_order(Node<Order>* curr);
+	Order get_next_vegan_order(Node<Order>* curr);
 	bool Insert_order(Order* O);
 	bool Remove_done_order_from_Inservice(int current_time);
 	bool Insert_vegan_chief(Chief* ch);
 	bool Remove_vegan_chief(Chief* ch);
 	bool Searchfor_available_vegan_chief(Chief* ch);
-	Chief* get_next_available_vegan_chief(Node<Chief>* curr_chief);
+	Chief get_next_available_vegan_chief(Node<Chief>* curr_chief);
 	void print_all_available_vegan_chiefs();
 
     // basmala
 	bool addChef(Chief* chef);
-	Chief* getNextChef(Chief* chef);
+	bool getNextChef(Chief* chef);
 	void print_All() const;
+	bool peekNextChef(Chief* chef) const;
+	bool isEmpty() const;
 
 	bool push(Order* order);
 	bool pop(Order*& order);

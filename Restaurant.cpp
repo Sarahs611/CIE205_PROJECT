@@ -294,15 +294,15 @@ bool Restaurant:: Searchfor_vegan_order(Order* vo)
     return found;
 }
 
-Order* Restaurant::get_next_vegan_order(Node<Order>* curr)
+Order Restaurant::get_next_vegan_order(Node<Order>* curr)
 {
     Order next;
     if (!curr->getNext())
     {
-        return &Order();
+        return Order();
     }
     next = curr->getNext()->getItem();
-    return &next;
+    return next;
 }
 
 
@@ -358,15 +358,15 @@ bool Restaurant::Searchfor_available_vegan_chief(Chief* ch)
     return found;
 }
 
-Chief* Restaurant::get_next_available_vegan_chief(Node<Chief>* curr_chief)
+Chief Restaurant::get_next_available_vegan_chief(Node<Chief>* curr_chief)
 {
     Chief Available_next_chief;
     if (!curr_chief->getNext())
     {
-        return &Chief();
+        return Chief();
     }
     Available_next_chief = curr_chief->getNext()->getItem();
-    return &Available_next_chief;
+    return Available_next_chief;
 }
 
 void Restaurant::print_all_available_vegan_chiefs()
@@ -425,47 +425,49 @@ bool Restaurant ::addChef(Chief* chef) {
     VIPChiefs.enqueue(chef);
     return true;   
 }
-
- Chief* Restaurant::getNextChef(Chief* chef) {
-    return queue.dequeue(chef);
+bool Restaurant::isEmpty() const {
+    return VIPChiefs.isEmpty();
 }
 
-bool Restaurant::peekNextChef(VIPChiefs& chef) const {
-    return queue.peek(chef);
+bool Restaurant::getNextChef(Chief* chef) {
+    return VIPChiefs.dequeue(chef);
+}
+
+bool Restaurant::peekNextChef(Chief* chef) const {
+    return VIPChiefs.peek(chef);
 }
 
 void Restaurant::print_All() const {
-    if (queue.isEmpty()) {
+    if (VIPChiefs.isEmpty()) {
         cout << "No VIP chefs available.\n";
         return;
     }
-
-    LinkedQueue<VIPChiefs> tempQueue = queue;
-    VIPChiefs temp;
+    LinkedQueue<Chief*> tempQueue = VIPChiefs;
+    Chief* temp = nullptr;
     cout << "Available VIP Chefs:\n";
     while (tempQueue.dequeue(temp)) {
-        cout << "ChefID: " << temp.chefID
-            << " | Speed: " << temp.speed
-            << " | Available: " << (temp.available ? "Yes" : "No") << "\n";
+        cout << "ChefID: " << temp->getChiefID()
+            << " | Speed: " << temp->getspeed()
+            << " | Available: " << (temp->get_available() ? "Yes" : "No") << "\n";
     }
 }
 
 //delivered Orders
 bool Restaurant::push(Order * order) {
-    if (isFull()) return false;
-    stack[++top] = order;
+    if (DeliveredOrders.isEmpty()==false) return false;
+    DeliveredOrders[++top] = order;
     return true;
 }
 
 bool  Restaurant::pop(Order*& order) {
     if (isEmpty()) return false;
-    order = stack[top--];
+    order = DeliveredOrders[top--];
     return true;
 }
 
 bool  Restaurant::peek(Order*& order) const {
     if (isEmpty()) return false;
-    order = stack[top];
+    order = DeliveredOrders[top];
     return true;
 }
 
@@ -476,11 +478,11 @@ void Restaurant::printAll() const {
     }
     cout << "Delivered Orders (Most recent first):\n";
     for (int i = top; i >= 0; i--) {
-        cout << "FT: " << stack[i]->get_FT()
-            << " | ID: " << stack[i]->get_orderID()
-            << " | RT: " << stack[i]->get_RT()
-            << " | WT: " << stack[i]->get_WT()
-            << " | ST: " << stack[i]->get_ST() << "\n";
+        cout << "FT: " << DeliveredOrders[i]->get_FT()
+            << " | ID: " << DeliveredOrders[i]->get_orderID()
+            << " | RT: " << DeliveredOrders[i]->get_RT()
+            << " | WT: " << DeliveredOrders[i]->get_WT()
+            << " | ST: " << DeliveredOrders[i]->get_ST() << "\n";
     }
 }
 
