@@ -5,11 +5,282 @@
 #include "Chief.h"
 #include "Restaurant.h"
 #include "LinkedQueue.h"
+#include "UI.h"
+#include <cmath>
 using namespace std;
 
 
+Restaurant::Restaurant(){
+    AutoP = 0;
+   totalWT = 0, totalST = 0;
+   deliveredC = 0, promotedC = 0;
+}
+
+void Restaurant::SimulationT(int mode)
+{
+    int timestep = 1;
+
+    if (mode == 2)
+        cout << "Silent mode on.\n";
+    while (!EventsList.isEmpty() || !VIPWaitList.isEmpty() || !WaitNorm.isEmpty()
+        || !Waiting_Vegan.isEmpty() || !In_service_orders.isEmpty() || !InBreakN.isEmpty()
+        || !InBreakG.isEmpty() || !InBreakVIP.isEmpty()) {
+
+        ExecuteTimestep(timestep);
+
+        if (mode == 1) {
+            UI::printCurrentStatus(this,timestep);
+            cout << "PRESS ENTER TO CONTINUE \n";
+            cin.get(); 
+        }
+        timestep++;
+    }
+    if (mode == 2)
+        cout << "Output file:\n";
+
+    OutputFile();
+}
+
+void Restaurant::ExecuteTimestep(int timestep)
+{
+    // Execute events
+    Event* ev = nullptr;
+    int c = EventsList.getCount();
+    for (int i = 0; i < c; i++)
+    {
+        if (!EventsList.peek(ev)) break;
+
+        if (ev->getEventTime() > timestep)
+            break;
+
+        EventsList.dequeue(ev);
+        if (ev)
+            ev->Execute(this);
+
+        delete ev;
+    }
+
+    //for n-orders waited too long 
+    checkAutoPromote(timestep);
+
+    assignOrders(timestep);
+
+   // updateInServiceOrders
+    priQueue<Order*> temp;
+    Order* order = nullptr;
+    int prio;
+
+    while (!In_service_orders.isEmpty())
+    {
+        In_service_orders.dequeue(order, prio);
+
+        if (order->getFinishT() <= timestep)
+        {
+            // Order is done
+            push(order); 
+            totalWT += order->getWaitingT();
+            totalST += order->getServeT();
+            deliveredC++;
+
+            Chief* c = order->get_assign_chief();
+            if (c->getordersbeforebreak() <= 0) {
+                // Chef goes to break
+                c->setBreakEndTime(timestep + c->getbreakduration());
+                c->set_available(false);
+
+                if (c->getchiefspecialization() == 'N')
+                    InBreakN.enqueue(c);
+                else if (c->getchiefspecialization() == 'G') 
+                    InBreakG.enqueue(c);
+                else if (c->getchiefspecialization() == 'V') 
+                    InBreakVIP.enqueue(c);
+            //reset
+                c->setordersbeforebreak(5);
+            }
+            else {
+                makeChiefready(c, timestep); 
+            }
+        }
+        else
+        {
+            temp.enqueue(order, order->getFinishT());  //keep it
+        }
+    }   
+    while (!temp.isEmpty())
+    {
+        temp.dequeue(order, prio);
+        In_service_orders.enqueue(order, prio);
+    }
+
+    //chefs coming from/going break 
+    updateChiefStatus(timestep);
+}
+void Restaurant::checkAutoPromote(int timestep)
+{
+    LinkedQueue<Order*> temp;
+    Order* currentOrder = nullptr;
+
+    while (!WaitNorm.isEmpty()) {
+        WaitNorm.dequeue(currentOrder);
+
+        int waitTime = timestep - currentOrder->getRequestT();
+        if (waitTime >= AutoP) {
+            currentOrder->calcPriority();
+            currentOrder->setOrderType('V');
+            addToVIPWait(currentOrder);
+            promotedC++;
+        }
+        else {
+            temp.enqueue(currentOrder);
+        }
+    }
+    while (!temp.isEmpty()) {
+        temp.dequeue(currentOrder);
+        WaitNorm.enqueue(currentOrder);
+    }
+}
+void Restaurant::assignOrders(int timestep)
+{
+    Order* order = nullptr;
+    Chief* chief = nullptr;
+    int prio;
+
+    //VIP Orders to vip chief, Normal , then Vegan
+    while (!VIPWaitList.isEmpty()) {
+
+        if (!VIPChiefs.isEmpty()) {
+            VIPChiefs.dequeue(chief);
+        }
+        else if (!readyNormalChefs.isEmpty()) {
+            readyNormalChefs.dequeue(chief);
+        }
+        else if (!Ready_Vegan_chief.isEmpty()) {
+            Ready_Vegan_chief.dequeue(chief);
+        }
+        else {
+            break; // no cheif
+        }
+
+        VIPWaitList.dequeue(order, prio);
+        assignOrderToChef(order, chief, timestep);
+    }
+
+    while (!Waiting_Vegan.isEmpty() && !Ready_Vegan_chief.isEmpty()) {
+        Waiting_Vegan.dequeue(order);
+        Ready_Vegan_chief.dequeue(chief);
+        assignOrderToChef(order, chief, timestep);
+    }
+
+    while (!WaitNorm.isEmpty()) {
+        if (!readyNormalChefs.isEmpty()) {
+            readyNormalChefs.dequeue(chief);
+        }
+        else if (!VIPChiefs.isEmpty()) {
+            VIPChiefs.dequeue(chief); 
+        }
+        else {
+            break; 
+        }
+        WaitNorm.dequeue(order);
+        assignOrderToChef(order, chief, timestep);
+    }
+}
+void Restaurant::assignOrderToChef(Order* order, Chief* chef, int timestep)
+{
+    order->setAssignT(timestep); // GT
+    order->setWaititngT(timestep - order->getRequestT()); //WT = GT - RT
+
+    int ST = ceil(order->getOrderSize() / chef->getspeed());
+    order->setServeT(ST); 
+    order->setFinishT(timestep + ST); // FT = GT + ST
+
+    order->set_assign_chief(chef); 
+
+    //workload
+    chef->setordersbeforebreak(chef->getordersbeforebreak() - 1);
+
+    if (chef->getordersbeforebreak() <= 0) {
+   
+        chef->setordersbeforebreak(0);
+    }
+    Insert_order(order);
+}
+
+void Restaurant::makeChiefready(Chief* ch, int time)
+{
+    if (!ch) return;
+
+    ch->set_available(true);
+
+    if (ch->getchiefspecialization() == 'N')
+        readyNormalChefs.enqueue(ch);
+    else if (ch->getchiefspecialization() == 'G')
+        Ready_Vegan_chief.enqueue(ch);
+    else
+        VIPChiefs.enqueue(ch);
+}
+void Restaurant::updateChiefStatus(int timestep)
+{
+    Chief* ch;
+
+    int sizeN = InBreakN.getCount();
+    for (int i = 0; i < sizeN; i++) {
+        InBreakN.dequeue(ch);
+        if (ch->getBreakEndTime() <= timestep) {
+            ch->set_available(true);
+            readyNormalChefs.enqueue(ch);
+        }
+        else {
+            InBreakN.enqueue(ch);
+        }
+    }
+
+    int sizeG = InBreakG.getCount();
+    for (int i = 0; i < sizeG; i++) {
+        InBreakG.dequeue(ch);
+        if (ch->getBreakEndTime() <= timestep) {
+            ch->set_available(true);
+            Ready_Vegan_chief.enqueue(ch);
+        }
+        else {
+            InBreakG.enqueue(ch);
+        }
+    }
+
+    int sizeVIP = InBreakVIP.getCount();
+    for (int i = 0; i < sizeVIP; i++) {
+        InBreakVIP.dequeue(ch);
+        if (ch->getBreakEndTime() <= timestep) {
+            ch->set_available(true);
+            VIPChiefs.enqueue(ch);
+        }
+        else {
+            InBreakVIP.enqueue(ch);
+        }
+    }
+}
+
+void Restaurant::printFTenEvents() const
+{
+    LinkedQueue<Event*> temp = EventsList;
+    Event* ev = nullptr;
+
+    for (int i = 0; i < 10 && !temp.isEmpty(); i++) {
+        temp.dequeue(ev);
+
+        cout << ev->getType() << "," << ev->getEventTime() << ","
+            << ev->getOrderID() << endl;
+    }
+}
+
+/////////////////////////////////\/\/\/\/\/\/\////////////////////////////////////////////
 void Restaurant::addEvent(Event* newEvent) {
     EventsList.enqueue(newEvent);
+}
+
+void Restaurant::printEvents() const
+{
+    return EventsList.Print();
 }
 
 Event* Restaurant::getNextEvent() {
@@ -21,9 +292,6 @@ Event* Restaurant::getNextEvent() {
     return nullptr;
 }
 
-void Restaurant::printEvents() const {
-    cout << "events list: "; EventsList.Print();
-}
 
 int Restaurant::countEvents() const {
     return EventsList.getCount();
@@ -40,8 +308,10 @@ Order* Restaurant::getNextVIPOrder()  {
   return nullptr;   
 }
 
-void Restaurant::addToVIPWait(Order* pOrder){
-    VIPWaitList.enqueue(pOrder, pOrder->getPriority());
+void Restaurant::addToVIPWait(Order* pOrder) {
+    if (pOrder->getOrderType() == 'V') {
+        VIPWaitList.enqueue(pOrder, pOrder->getPriority());
+    }
 }
 
 int Restaurant::countVIPOrders() const{
@@ -119,11 +389,11 @@ int Restaurant::countInBreakChiefs() const
 }
 void Restaurant::printInBreakChiefs() const{
    
-    cout << "In-Break normal Chiefs"; InBreakN.Print();
+    cout << "In-Break normal Chiefs\n"; InBreakN.Print();
 
-    cout << "in-Break vegan Chiefs"; InBreakG.Print();
+    cout << "in-Break vegan Chiefs\n"; InBreakG.Print();
 
-    cout << "In-Break VIP Chiefs"; InBreakVIP.Print();
+    cout << "In-Break VIP Chiefs\n"; InBreakVIP.Print();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,7 +463,7 @@ void Restaurant::LoadInputFile(string fileName) {
     inputFile >> sNormal >> sVegan >> sVIP;
 
     int bAfter, bTime;
-    inputFile >> bAfter >> bTime;
+    inputFile >> bAfter >> bTime>>AutoP;
 
     for (int i = 0; i < nNormal; i++) {
         Chief* ch = new Chief(i + 1, 'N', sNormal, bAfter, bTime);
@@ -230,7 +500,7 @@ void Restaurant::PrintReadyNormalChefs() {
     }
 }
 
-void  Restaurant::PrintAll()const  {
+void  Restaurant::PrintNormalOrders()const  {
     LinkedQueue<Order*> temp = WaitNorm;
     Order* current = nullptr;
    
@@ -388,7 +658,6 @@ void Restaurant::print_all_available_vegan_chiefs()
     }
 }
 
-
 //In_service_orders
 bool Restaurant::Insert_order(Order* O)
 {
@@ -458,6 +727,11 @@ bool Restaurant::push(Order * order) {
     return DeliveredOrders.push(order);
 }
 
+ArrayStack<Order*>& Restaurant::getDeliveredOrders()
+{
+    return DeliveredOrders;
+}
+
 bool Restaurant::pop(Order*& order) {
     if (DeliveredOrders.isEmpty())
         return false;
@@ -472,7 +746,7 @@ bool Restaurant::peek(Order*& order) const {
     return true;
 }
 
-void Restaurant::printAll_delivered_order(ArrayStack<Order*>& DeliveredOrders)  {
+void Restaurant::printAll_delivered_order()  {
       if (DeliveredOrders.isEmpty()) {
             cout << "No delivered orders.\n";
             return;
@@ -485,6 +759,7 @@ void Restaurant::printAll_delivered_order(ArrayStack<Order*>& DeliveredOrders)  
             cout << "FT: " << tempOrder->getFinishT()
                 << " | ID: " << tempOrder->getOrderID()
                 << " | RT: " << tempOrder->getRequestT()
+                << " | GT: " << tempOrder->getAssignT()
                 << " | WT: " << tempOrder->getWaitingT()
                 << " | ST: " << tempOrder->getServeT() << "\n";
             tempStack.push(tempOrder);

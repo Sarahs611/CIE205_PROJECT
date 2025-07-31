@@ -11,6 +11,7 @@ Chief::Chief()
 	orders_before_break = 0;
 	break_duration = 0;
 	available = true;
+
 }
 
 int Chief::getChiefID()const
@@ -40,6 +41,11 @@ bool Chief::get_available() const
 	return available;
 }
 
+int Chief::getBreakEndTime() const
+{
+	return breakEndT;
+}
+
 void Chief::setChiefID(int id)
 {
 	Chief_ID = id;
@@ -52,7 +58,7 @@ void Chief::setspeed(int s)
 {
 	speed = s;
 }
-void Chief::ordersbeforebreak(int bb)
+void Chief::setordersbeforebreak(int bb)
 {
 	orders_before_break = bb;
 }
@@ -64,7 +70,13 @@ void Chief::set_available(bool a) {
 	available = a;
 }
 
+void Chief::setBreakEndTime(int t)
+{
+	breakEndT = t;
+}
+
 void Chief::print() const {
-	cout << "Cheif Id" << getChiefID() << ", Cheif specialization: " << getchiefspecialization()
-		<< ", Chief speed: " << getspeed() << "orders before break" << getordersbeforebreak() << ",break duration" << getbreakduration() << endl;
+	cout << "Cheif Id: " << getChiefID() << ", Cheif specialization: " << getchiefspecialization()
+		<< ", Chief speed: " << getspeed() << "orders before break: " << getordersbeforebreak() 
+		<< ",break duration: " << getbreakduration() << endl;
 }

@@ -1,4 +1,3 @@
-#include "main.h"
 #include <iostream>
 #include "Event.h"
 #include "Restaurant.h"
@@ -6,13 +5,16 @@
 #include "Chief.h"
 #include "priQueue.h"
 #include "LinkedQueue.h"
+#include "UI.h"
 using namespace std;
 
 int main()
 {
 
-    cout << " Welcome ^_^ ";
+    cout << " Welcome ^_^ "<<endl;
     Restaurant r;
+    int mode = UI::selectMode(); 
+    r.SimulationT(mode);
     r.LoadInputFile("input.txt");
 
     int currentTime = 0;
@@ -38,9 +40,9 @@ int main()
 
     // Add events to EventsList
     cout << "Adding events : \n";
-    Event* e1 = new Arrival(1, 'N', 101, 3, 50);
-    Event* e2 = new Arrival(2, 'V', 102, 2, 150);
-    Event* e3 = new Arrival(3, 'G', 103, 1, 90);
+    Event* e1 = new Arrival('N',1, 101, 3, 50);
+    Event* e2 = new Arrival('V',2, 102, 2, 150);
+    Event* e3 = new Arrival('G',3, 103, 1, 90);
     Event* e4 = new Promotion(4, 101, 50);
     Event* e5 = new Cancel(5, 103);
 
@@ -58,6 +60,12 @@ int main()
         nextEvent->Execute(&r);
         delete nextEvent;
     }
+
+
+
+
+
+
     //insert vegan orders
     Order* vo1 = new Order();
     vo1->setOrderID(70);
@@ -151,30 +159,6 @@ int main()
     r.Insert_vegan_chief(vchief2);
     r.Insert_vegan_chief(vchief3);
     r.print_all_available_vegan_chiefs();
-
-    //vip 
-    r.countVIPOrders();
-    r.printVIPOrders();
-
-    Order* nextVIP = r.getNextVIPOrder();
-    if (nextVIP) {
-        cout << "Next VIP Order: ";
-        nextVIP->print();
-    }
-
-    //inbreakchiefs
-    Chief* chef = new Chief(3, 'V', 4, 6, 12);
-    r.addChiefToBreak(chef);
-    r.countInBreakChiefs();
-    r.printInBreakChiefs();
-
-    //test
-    Order* newOrder = new Order();
-    newOrder->setOrderID(200);
-    newOrder->setOrderType('N');
-    newOrder->setPrice(50);
-    newOrder->setOrderSize(3);
-    r.addNormalOrder(newOrder);
 
     // insert normal orders
     Order* no1 = new Order();
@@ -338,12 +322,34 @@ int main()
     vip10->setOrderSize(10);
     vip10->setFinishT(55);
     r.addToVIPWait(vip10);
+
+    //vip 
+    cout<< "\nTotal before VIP Orders:"<< r.countVIPOrders()<<endl;
     r.printVIPOrders();
 
+    Order* nextVIP = r.getNextVIPOrder();
+    if (nextVIP) {
+        cout << "\nNext VIP Order: ";
+        nextVIP->print();
+    }
+
+    //inbreakchiefs
+    Chief* chef = new Chief(3, 'V', 4, 6, 12);
+    r.addChiefToBreak(chef);
+    cout << "\n Count of VIP Chiefs :"<< r.countInBreakChiefs()<<endl;
+    r.printInBreakChiefs();
+
+    //test 
+    Order* newOrder = new Order();
+    newOrder->setOrderID(200);
+    newOrder->setOrderType('N');
+    newOrder->setPrice(50);
+    newOrder->setOrderSize(3);
+    r.addNormalOrder(newOrder);
 
     bool promoted = r.promoteOrder(200, 100);
     if (promoted) {
-        cout << "Promotion done." << endl;
+        cout << "\nPromotion done." << endl;
     }
     else {
         cout << "Promotion failed." << endl;
@@ -356,4 +362,5 @@ int main()
     else {
         cout << "Cancel failed." << endl;
     }
+    cout << "\nTotal after VIP Orders:" << r.countVIPOrders() << endl;
 }

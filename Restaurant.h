@@ -10,6 +10,11 @@ class Restaurant
 {
 private:
 	//Sarah
+
+	int AutoP;
+	double totalWT, totalST;
+	int deliveredC = 0, promotedC;
+
 	LinkedQueue<Event*> EventsList;
 
 	priQueue<Order*> VIPWaitList;
@@ -33,6 +38,16 @@ private:
 	ArrayStack<Order*> DeliveredOrders;
 
 public:
+	Restaurant();
+	void SimulationT(int mode);
+	void ExecuteTimestep(int timestep);
+	void assignOrders(int timestep); 
+	void assignOrderToChef(Order* order, Chief* chef, int timestep);
+	void checkAutoPromote(int timestep);
+	void updateChiefStatus(int timestep);
+	void  makeChiefready(Chief* ch, int times);
+    void printFTenEvents() const;
+
 	Event* getNextEvent();
 	void addEvent(Event* newEvent);
 	void printEvents()const;
@@ -45,7 +60,6 @@ public:
 	bool cancelEvent(int id);
 	bool promoteOrder(int orderID, double extraMoney);
 
-
 	Chief* getReadyChief(char chiefType);
 	void addChiefToBreak(Chief* pChief);
 	int  countInBreakChiefs()const ;
@@ -57,7 +71,7 @@ public:
 	void addNormalOrder(Order* order);
 	void LoadInputFile(string filename);
 	void PrintReadyNormalChefs();
-	void PrintAll()const;
+	void PrintNormalOrders()const;
 
 	//mariam
 	bool Insert_vegan_order(Order* vo);
@@ -71,6 +85,8 @@ public:
 	bool Searchfor_available_vegan_chief(Chief* ch);
 	Chief get_next_available_vegan_chief(Node<Chief>* curr_chief);
 	void print_all_available_vegan_chiefs();
+	void PrintVeganOrders() const;
+	void printInServeOrders() const;
 
     // basmala
 	bool addChef(Chief* chef);
@@ -80,9 +96,10 @@ public:
 	bool isEmpty() const;
 
 	bool push(Order* order);
+	ArrayStack<Order*>& getDeliveredOrders();
 	bool pop(Order*& order);
 	bool peek(Order*& order) const;
-	void printAll_delivered_order(ArrayStack<Order*>& DeliveredOrders);
+	void printAll_delivered_order();
 
 	
 };

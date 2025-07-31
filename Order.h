@@ -1,15 +1,17 @@
 #pragma once
 #include "Event.h"
 #include "Chief.h"
+#include <iostream>
+using namespace std;
+
 class Order
 {
 private:
 	int OrderID; char OrderType; double price;
-	int Ordersize; int priority;
-	int requestT; int FinishT; 
+	int Ordersize; int priority; int GT;
+	int requestT; int FinishT;
 	int waitT; int serveT;
 	Chief* assign_chief;
-
 
 public:
 	int getOrderID() const;
@@ -19,10 +21,10 @@ public:
 	int getPriority() const;
 	int getRequestT() const;
 	int getFinishT()const;
-	int get_assign_chief()const;
 	int getWaitingT() const;
 	int getServeT() const;
-
+	Chief* get_assign_chief()const;
+	int getAssignT() const;
 
 	void setOrderID(int id);
 	void setOrderType(char type);
@@ -31,10 +33,10 @@ public:
 	void setPriority(int pri);
 	void setRequestT(int RT);
 	void setFinishT(int FT);
-	void set_assign_chief(Chief* ch);
 	void setWaititngT(int t);
 	void setServeT(int t);
-
+	void set_assign_chief(Chief* ch);
+	void setAssignT(int time);
 
 	void calcPriority();
 	void print() const;

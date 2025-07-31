@@ -72,8 +72,7 @@ public:
     void print() const {
         priNode<T>* current = head;
         while (current) {
-            cout << "Priority: " << current->getPri() << endl;
-            current->getItem()->print(); 
+            cout << *(current->getItem()) << endl;
             current = current->getNext();
         }
     }

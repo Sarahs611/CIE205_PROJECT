@@ -17,6 +17,7 @@ public:
 
 	virtual void Execute(Restaurant* Rest) = 0;
 	virtual void print() const;
+	virtual char getType() const = 0;
 	virtual ~Event() {}
 };
 
@@ -35,6 +36,7 @@ public:
 	char getOrderType() const;
 	int getSize() const;
 	double getPrice() const;
+	char getType() const override;
 
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
@@ -48,6 +50,8 @@ public:
 	
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
+	char getType() const override;
+
 };
 
 class Promotion:public Event {
@@ -60,4 +64,6 @@ public:
 	}
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
+	char getType() const override;
+
 };

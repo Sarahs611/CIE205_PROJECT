@@ -11,6 +11,7 @@ private:
 	int orders_before_break;
 	int break_duration;
 	bool available;
+	int breakEndT = -1;
 
 public:
 	Chief();
@@ -28,13 +29,16 @@ public:
 	int  getordersbeforebreak()const;
 	int  getbreakduration()const;
 	bool get_available() const;
+	int getBreakEndTime() const;
+
 	void setChiefID(int id);
 	void setchiefspecialization(char t);
 	void setspeed(int s);
-	void set_available(bool a);
-
-	void ordersbeforebreak(int b);
+	void setordersbeforebreak(int b);
 	void setbreakduration(int d);
+	void set_available(bool a);
+	void setBreakEndTime(int t);
+
 	void print()const;
 };
 
