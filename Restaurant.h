@@ -60,7 +60,7 @@ public:
 	bool cancelEvent(int id);
 	bool promoteOrder(int orderID, double extraMoney);
 
-	Chief* getReadyChief(char chiefType);
+	Chief* getChiefInBreak(char chiefType);
 	void addChiefToBreak(Chief* pChief);
 	int  countInBreakChiefs()const ;
 	void printInBreakChiefs()const;

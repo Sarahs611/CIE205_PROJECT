@@ -72,7 +72,7 @@ public:
     void print() const {
         priNode<T>* current = head;
         while (current) {
-            cout << *(current->getItem()) << endl;
+            cout << current->getItem() << endl;
             current = current->getNext();
         }
     }

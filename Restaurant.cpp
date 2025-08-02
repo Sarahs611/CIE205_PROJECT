@@ -199,10 +199,10 @@ void Restaurant::assignOrderToChef(Order* order, Chief* chef, int timestep)
     //workload
     chef->setordersbeforebreak(chef->getordersbeforebreak() - 1);
 
-    if (chef->getordersbeforebreak() <= 0) {
-   
+    if (chef->getordersbeforebreak() < 0) {
         chef->setordersbeforebreak(0);
     }
+
     Insert_order(order);
 }
 
@@ -280,7 +280,7 @@ void Restaurant::addEvent(Event* newEvent) {
 
 void Restaurant::printEvents() const
 {
-    return EventsList.Print();
+     EventsList.Print();
 }
 
 Event* Restaurant::getNextEvent() {
@@ -342,6 +342,7 @@ bool Restaurant::promoteOrder(int orderID, double extraMoney)
             found = true;
             currentOrder->setPrice(currentOrder->getPrice() + extraMoney);
             currentOrder->calcPriority();
+            currentOrder->setOrderType('V');
             VIPWaitList.enqueue(currentOrder, currentOrder->getPriority());
         }
         else
@@ -354,20 +355,18 @@ bool Restaurant::promoteOrder(int orderID, double extraMoney)
     return found;
 }
 
-
-
-Chief* Restaurant::getReadyChief(char chiefType) {
-     Chief* readyChief = nullptr;
+Chief* Restaurant::getChiefInBreak(char chiefType) {
+     Chief* chiefInBreak = nullptr;
     if (chiefType == 'N' && !InBreakN.isEmpty()) {
-       InBreakN.dequeue(readyChief);
+       InBreakN.peek(chiefInBreak);
     }
     else if (chiefType == 'G' && !InBreakG.isEmpty()) {
-       InBreakG.dequeue(readyChief);
+       InBreakG.peek(chiefInBreak);
     }
     else if (chiefType == 'V' && !InBreakVIP.isEmpty()) {
-       InBreakVIP.dequeue(readyChief);
+       InBreakVIP.peek(chiefInBreak);
     }
-        return readyChief;
+        return chiefInBreak;
 }
 
 void Restaurant::addChiefToBreak(Chief* Chief){
