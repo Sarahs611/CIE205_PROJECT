@@ -4,7 +4,7 @@
 #include "Order.h"
 #include "Chief.h" 
 #include "ArrayStack.h"
-
+#include <fstream>
 #include<string>
 class Restaurant
 {
@@ -59,6 +59,8 @@ public:
 	void updateChiefStatus(int timestep);
 	void  makeChiefready(Chief* ch, int times);
 	void printFTenEvents() const;
+	void OutputFile(const string& filename);
+
 
 	Event* getNextEvent();
 	void addEvent(Event* newEvent);
