@@ -20,7 +20,7 @@ void Event::print() const
         << ", Order ID: " << getOrderID() << endl;
 }
 
-char Arrival:: getOrderType() const { 
+string Arrival:: getOrderType() const { 
     return orderType;
 }
 int Arrival:: getSize() const { 
@@ -30,9 +30,9 @@ double Arrival::getPrice() const {
     return price;
 }
 
-char Arrival::getType() const
+string Arrival::getType() const
 {
-    return 'A';
+    return "A";
 }
 
 void Arrival::print() const
@@ -52,11 +52,11 @@ void Arrival::Execute(Restaurant* Rest)
     newOrder->setPrice(price);
     newOrder->setRequestT(eventTime);
 
-    if (orderType == 'N')
+    if (orderType == "N")
         Rest->addNormalOrder(newOrder);
-    else if (orderType == 'G')
+    else if (orderType == "G")
         Rest->Insert_vegan_order(newOrder);
-    else if (orderType == 'V') {
+    else if (orderType == "V") {
         newOrder->calcPriority();
         Rest->addToVIPWait(newOrder);
     }
@@ -72,9 +72,9 @@ void Cancel::Execute(Restaurant* Rest)
     Rest->CancelOrder(orderID);
 }
 
-char Cancel::getType() const
+string Cancel::getType() const
 {
-    return 'X';
+    return "X";
 }
 
 void Promotion::print() const
@@ -87,9 +87,9 @@ void Promotion::Execute(Restaurant* Rest) {
     Rest->promoteOrder(orderID, extraMoney);
 }
 
-char Promotion::getType() const
+string Promotion::getType() const
 {
-    return 'P';
+    return "P";
 }
 
 

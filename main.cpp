@@ -40,9 +40,9 @@ int main()
 
     // Add events to EventsList
     cout << "Adding events : \n";
-    Event* e1 = new Arrival('N',1, 101, 3, 50);
-    Event* e2 = new Arrival('V',2, 102, 2, 150);
-    Event* e3 = new Arrival('G',3, 103, 1, 90);
+    Event* e1 = new Arrival("N",1, 101, 3, 50);
+    Event* e2 = new Arrival("V",2, 102, 2, 150);
+    Event* e3 = new Arrival("G",3, 103, 1, 90);
     Event* e4 = new Promotion(4, 101, 50);
     Event* e5 = new Cancel(5, 103);
 
@@ -69,7 +69,7 @@ int main()
     //insert vegan orders
     Order* vo1 = new Order();
     vo1->setOrderID(70);
-    vo1->setOrderType('v');
+    vo1->setOrderType("v");
     vo1->setPrice(65);
     vo1->setOrderSize(1);
     vo1->setFinishT(12);
@@ -77,7 +77,7 @@ int main()
 
     Order* vo2 = new Order();
     vo2->setOrderID(65);
-    vo2->setOrderType('v');
+    vo2->setOrderType("v");
     vo2->setPrice(100);
     vo2->setOrderSize(2);
     vo2->setFinishT(15);
@@ -85,7 +85,7 @@ int main()
 
     Order* vo3 = new Order();
     vo3->setOrderID(60);
-    vo3->setOrderType('v');
+    vo3->setOrderType("V");
     vo3->setPrice(200);
     vo3->setOrderSize(3);
     vo3->setFinishT(20);
@@ -93,7 +93,7 @@ int main()
 
     Order* vo4 = new Order();
     vo4->setOrderID(40);
-    vo4->setOrderType('v');
+    vo4->setOrderType("V");
     vo4->setPrice(250);
     vo4->setOrderSize(4);
     vo4->setFinishT(25);
@@ -101,7 +101,7 @@ int main()
 
     Order* vo5 = new Order();
     vo5->setOrderID(80);
-    vo5->setOrderType('v');
+    vo5->setOrderType("V");
     vo5->setPrice(300);
     vo5->setOrderSize(5);
     vo5->setFinishT(30);
@@ -109,7 +109,7 @@ int main()
 
     Order* vo6 = new Order();
     vo6->setOrderID(30);
-    vo6->setOrderType('v');
+    vo6->setOrderType("V");
     vo6->setPrice(350);
     vo6->setOrderSize(3);
     vo6->setFinishT(23);
@@ -117,7 +117,7 @@ int main()
 
     Order* vo7 = new Order();
     vo7->setOrderID(15);
-    vo7->setOrderType('v');
+    vo7->setOrderType("V");
     vo7->setPrice(450);
     vo7->setOrderSize(5);
     vo7->setFinishT(30);
@@ -125,7 +125,7 @@ int main()
 
     Order* vo8 = new Order();
     vo8->setOrderID(10);
-    vo8->setOrderType('v');
+    vo8->setOrderType("V");
     vo8->setPrice(120);
     vo8->setOrderSize(1);
     vo8->setFinishT(10);
@@ -134,7 +134,7 @@ int main()
 
     Order* vo9 = new Order();
     vo9->setOrderID(90);
-    vo9->setOrderType('v');
+    vo9->setOrderType("V");
     vo9->setPrice(500);
     vo9->setOrderSize(6);
     vo9->setFinishT(40);
@@ -142,7 +142,7 @@ int main()
 
     Order* vo10 = new Order();
     vo10->setOrderID(100);
-    vo10->setOrderType('v');
+    vo10->setOrderType("V");
     vo10->setPrice(600);
     vo10->setOrderSize(7);
     vo10->setFinishT(45);
@@ -152,9 +152,9 @@ int main()
     r.Remove_vegan_order(vo1);
 
     //add vegan chiefs
-    Chief* vchief1 = new Chief(4, 'v', 3, 2, 5);
-    Chief* vchief2 = new Chief(7, 'v', 5, 1, 3);
-    Chief* vchief3 = new Chief(6, 'v', 2, 3, 6);
+    Chief* vchief1 = new Chief(4, "V", 3, 2, 5);
+    Chief* vchief2 = new Chief(7, "V", 5, 1, 3);
+    Chief* vchief3 = new Chief(6, "V", 2, 3, 6);
     r.Insert_vegan_chief(vchief1);
     r.Insert_vegan_chief(vchief2);
     r.Insert_vegan_chief(vchief3);
@@ -163,7 +163,7 @@ int main()
     // insert normal orders
     Order* no1 = new Order();
     no1->setOrderID(201);
-    no1->setOrderType('N');
+    no1->setOrderType("N");
     no1->setPrice(80);
     no1->setOrderSize(2);
     no1->setFinishT(15);
@@ -171,7 +171,7 @@ int main()
 
     Order* no2 = new Order();
     no2->setOrderID(202);
-    no2->setOrderType('N');
+    no2->setOrderType("N");
     no2->setPrice(120);
     no2->setOrderSize(3);
     no2->setFinishT(20);
@@ -179,7 +179,7 @@ int main()
 
     Order* no3 = new Order();
     no3->setOrderID(203);
-    no3->setOrderType('N');
+    no3->setOrderType("N");
     no3->setPrice(200);
     no3->setOrderSize(4);
     no3->setFinishT(25);
@@ -187,7 +187,7 @@ int main()
 
     Order* no4 = new Order();
     no4->setOrderID(204);
-    no4->setOrderType('N');
+    no4->setOrderType("N");
     no4->setPrice(150);
     no4->setOrderSize(2);
     no4->setFinishT(18);
@@ -195,7 +195,7 @@ int main()
 
     Order* no5 = new Order();
     no5->setOrderID(205);
-    no5->setOrderType('N');
+    no5->setOrderType("N");
     no5->setPrice(300);
     no5->setOrderSize(5);
     no5->setFinishT(30);
@@ -203,7 +203,7 @@ int main()
 
     Order* no6 = new Order();
     no6->setOrderID(206);
-    no6->setOrderType('N');
+    no6->setOrderType("N");
     no6->setPrice(400);
     no6->setOrderSize(6);
     no6->setFinishT(35);
@@ -211,7 +211,7 @@ int main()
 
     Order* no7 = new Order();
     no7->setOrderID(207);
-    no7->setOrderType('N');
+    no7->setOrderType("N");
     no7->setPrice(250);
     no7->setOrderSize(3);
     no7->setFinishT(28);
@@ -219,7 +219,7 @@ int main()
 
     Order* no8 = new Order();
     no8->setOrderID(208);
-    no8->setOrderType('N');
+    no8->setOrderType("N");
     no8->setPrice(180);
     no8->setOrderSize(2);
     no8->setFinishT(22);
@@ -227,7 +227,7 @@ int main()
 
     Order* no9 = new Order();
     no9->setOrderID(209);
-    no9->setOrderType('N');
+    no9->setOrderType("N");
     no9->setPrice(500);
     no9->setOrderSize(7);
     no9->setFinishT(40);
@@ -235,7 +235,7 @@ int main()
 
     Order* no10 = new Order();
     no10->setOrderID(210);
-    no10->setOrderType('N');
+    no10->setOrderType("N");
     no10->setPrice(600);
     no10->setOrderSize(8);
     no10->setFinishT(50);
@@ -245,7 +245,7 @@ int main()
     // insert VIP orders
     Order* vip1 = new Order();
     vip1->setOrderID(301);
-    vip1->setOrderType('V');
+    vip1->setOrderType("V");
     vip1->setPrice(200);
     vip1->setOrderSize(3);
     vip1->setFinishT(20);
@@ -253,7 +253,7 @@ int main()
 
     Order* vip2 = new Order();
     vip2->setOrderID(302);
-    vip2->setOrderType('V');
+    vip2->setOrderType("V");
     vip2->setPrice(300);
     vip2->setOrderSize(4);
     vip2->setFinishT(25);
@@ -261,7 +261,7 @@ int main()
 
     Order* vip3 = new Order();
     vip3->setOrderID(303);
-    vip3->setOrderType('V');
+    vip3->setOrderType("V");
     vip3->setPrice(500);
     vip3->setOrderSize(5);
     vip3->setFinishT(30);
@@ -269,7 +269,7 @@ int main()
 
     Order* vip4 = new Order();
     vip4->setOrderID(304);
-    vip4->setOrderType('V');
+    vip4->setOrderType("V");
     vip4->setPrice(350);
     vip4->setOrderSize(3);
     vip4->setFinishT(22);
@@ -277,7 +277,7 @@ int main()
 
     Order* vip5 = new Order();
     vip5->setOrderID(305);
-    vip5->setOrderType('V');
+    vip5->setOrderType("V");
     vip5->setPrice(450);
     vip5->setOrderSize(6);
     vip5->setFinishT(35);
@@ -285,7 +285,7 @@ int main()
 
     Order* vip6 = new Order();
     vip6->setOrderID(306);
-    vip6->setOrderType('V');
+    vip6->setOrderType("V");
     vip6->setPrice(700);
     vip6->setOrderSize(7);
     vip6->setFinishT(40);
@@ -293,7 +293,7 @@ int main()
 
     Order* vip7 = new Order();
     vip7->setOrderID(307);
-    vip7->setOrderType('V');
+    vip7->setOrderType("V");
     vip7->setPrice(800);
     vip7->setOrderSize(8);
     vip7->setFinishT(45);
@@ -301,7 +301,7 @@ int main()
 
     Order* vip8 = new Order();
     vip8->setOrderID(308);
-    vip8->setOrderType('V');
+    vip8->setOrderType("V");
     vip8->setPrice(600);
     vip8->setOrderSize(5);
     vip8->setFinishT(32);
@@ -309,7 +309,7 @@ int main()
 
     Order* vip9 = new Order();
     vip9->setOrderID(309);
-    vip9->setOrderType('V');
+    vip9->setOrderType("V");
     vip9->setPrice(900);
     vip9->setOrderSize(9);
     vip9->setFinishT(50);
@@ -317,7 +317,7 @@ int main()
 
     Order* vip10 = new Order();
     vip10->setOrderID(310);
-    vip10->setOrderType('V');
+    vip10->setOrderType("V");
     vip10->setPrice(1000);
     vip10->setOrderSize(10);
     vip10->setFinishT(55);
@@ -334,7 +334,7 @@ int main()
     }
 
     //inbreakchiefs
-    Chief* chef = new Chief(3, 'V', 4, 6, 12);
+    Chief* chef = new Chief(3, "V", 4, 6, 12);
     r.addChiefToBreak(chef);
     cout << "\n Count of VIP Chiefs :"<< r.countInBreakChiefs()<<endl;
     r.printInBreakChiefs();
@@ -342,7 +342,7 @@ int main()
     //test 
     Order* newOrder = new Order();
     newOrder->setOrderID(200);
-    newOrder->setOrderType('N');
+    newOrder->setOrderType("N");
     newOrder->setPrice(50);
     newOrder->setOrderSize(3);
     r.addNormalOrder(newOrder);

@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <string>
+using namespace std;
 class Restaurant;
 
 class Event
@@ -17,26 +19,26 @@ public:
 
 	virtual void Execute(Restaurant* Rest) = 0;
 	virtual void print() const;
-	virtual char getType() const = 0;
+	virtual string getType() const = 0;
 	virtual ~Event() {}
 };
 
 class Arrival : public Event {
 private:
-	char orderType;  
+	string orderType;  
 	int size; 
 	double price;
 public:
-	Arrival(char ordertype, int Size, double Price, int eTime, int orderId) :
+	Arrival(string ordertype, int Size, double Price, int eTime, int orderId) :
 		Event(eTime, orderId) {
 		orderType = ordertype;
 		size = Size;
 		price = Price;
 	}
-	char getOrderType() const;
+	string getOrderType() const;
 	int getSize() const;
 	double getPrice() const;
-	char getType() const override;
+	string getType() const override;
 
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
@@ -50,7 +52,7 @@ public:
 	
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
-	char getType() const override;
+	string getType() const override;
 
 };
 
@@ -64,6 +66,6 @@ public:
 	}
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
-	char getType() const override;
+	string getType() const override;
 
 };
