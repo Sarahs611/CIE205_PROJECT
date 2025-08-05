@@ -6,7 +6,7 @@ using namespace std;
 int Order::getOrderID() const {
 	return OrderID;
 }
-char Order::getOrderType() const {
+string Order::getOrderType() const {
 	return OrderType;
 }
 double Order::getPrice() const {
@@ -49,7 +49,7 @@ int Order::getAssignT() const
 void Order::setOrderID(int id) {
 	OrderID = id;
 }
-void Order::setOrderType(char type) {
+void Order::setOrderType(string type) {
 	OrderType = type;
 }
 void Order::setPrice(double p) {
@@ -92,8 +92,7 @@ void Order::calcPriority()
 
 }
 void Order::print() const {
-	cout << "OrderID: " << getOrderID() << ", Order Type: " << getOrderType()
-		<< ", Price: $" << getPrice() << ", Order Size: " << getOrderSize()
-		<< ", Requested time: " << getRequestT() << ", Finish Time: " << getFinishT()<<endl;
+	cout << "Order ID: " << getOrderID()<< " | Type: " << getOrderType() << " | Price: $" << getPrice()<< " | Size: "
+		<< getOrderSize()<< " | Request Time: " << getRequestT()<< " | Finish Time: " << getFinishT() << endl;
 }
 

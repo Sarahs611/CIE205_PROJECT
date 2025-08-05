@@ -2,23 +2,29 @@
 #include <iostream>
 using namespace std;
 
-
 Chief::Chief()
 {
-	Chief_ID = -1;                
-	chief_specialization = 'N';  
-	speed = 0;
-	orders_before_break = 0;
-	break_duration = 0;
-	available = true;
+}
 
+Chief::Chief(int id,string type, int spd, int ordersBeforeBreak, int breakTime)
+{
+	Chief_ID = id;
+	chief_specialization = type;
+	speed = spd;
+	orders_before_break = ordersBeforeBreak;
+	maxOrdersBeforeBreak = ordersBeforeBreak;
+	break_duration = breakTime;
+	breakEndT = -1;
+	curr_Speed = spd;
+	available = true; injured = false; ComeBackEarly = false;
+	inj_RestT = 0;inj_EndT = 0;
 }
 
 int Chief::getChiefID()const
 {
 	return Chief_ID;
 }
-char Chief::getchiefspecialization()const
+string Chief::getchiefspecialization()const
 {
 	return chief_specialization;
 }
@@ -29,6 +35,11 @@ int Chief::getspeed()const
 int Chief::getordersbeforebreak()const
 {
 	return orders_before_break;
+}
+
+int Chief::getMaxOrdersBeforeBreak() const
+{
+	return maxOrdersBeforeBreak;
 }
 
 int Chief::getbreakduration()const
@@ -46,11 +57,36 @@ int Chief::getBreakEndTime() const
 	return breakEndT;
 }
 
+int Chief::getcurrSpeed() const
+{
+	return curr_Speed;
+}
+
+int Chief::getinjRT() const
+{
+	return inj_RestT;
+}
+
+int Chief::getinjET() const
+{
+	return inj_EndT;
+}
+
+bool Chief::isInjured() const
+{
+	return injured;
+}
+
+bool Chief::ComeBackE() const
+{
+	return ComeBackEarly;
+}
+
 void Chief::setChiefID(int id)
 {
 	Chief_ID = id;
 }
-void Chief::setchiefspecialization(char t)
+void Chief::setchiefspecialization(string t)
 {
 	chief_specialization = t;
 }
@@ -76,7 +112,36 @@ void Chief::setBreakEndTime(int t)
 }
 
 void Chief::print() const {
-	cout << "Cheif Id: " << getChiefID() << ", Cheif specialization: " << getchiefspecialization()
-		<< ", Chief speed: " << getspeed() << "orders before break: " << getordersbeforebreak() 
-		<< ",break duration: " << getbreakduration() << endl;
+	cout << "Chef ID: " << getChiefID()<< " | Specialization: " << getchiefspecialization() << " | Speed: " << getspeed()
+		<< " | Orders before break: " << getordersbeforebreak()<< " | Break duration: " << getbreakduration()<< endl;
+}
+
+void Chief::recover(int currentTime) {
+	if (injured && currentTime >= inj_EndT) {
+		injured = false;
+		ComeBackEarly = false;
+		curr_Speed = speed;
+		available = true;
+		// reset workload
+		setordersbeforebreak(getMaxOrdersBeforeBreak());
+	}
+}
+
+void Chief::needRest(int restTime, int currentTime)
+{
+	injured = true;
+	inj_RestT = restTime;
+	inj_EndT = currentTime + restTime;
+	ComeBackEarly = false;
+	available = false;
+}
+
+void Chief::forceBack(int currentTime) {
+	if (injured && currentTime < inj_EndT) {
+		ComeBackEarly = true;
+		curr_Speed = speed / 2;
+		available = true;
+
+		setordersbeforebreak(getMaxOrdersBeforeBreak());
+	}
 }
