@@ -10,7 +10,6 @@ class Restaurant
 {
 private:
 	//Sarah
-
 	int AutoP;
 	double totalWT, totalST;
 	int deliveredC = 0, promotedC;
@@ -18,7 +17,7 @@ private:
 	LinkedQueue<Event*> EventsList;
 
 	priQueue<Order*> VIPWaitList;
-
+	priQueue<Chief*>VIPChiefs;
 	LinkedQueue<Chief*> InBreakN;
 	LinkedQueue<Chief*> InBreakG;
 	LinkedQueue<Chief*> InBreakVIP;
@@ -28,20 +27,19 @@ private:
 
 	//Mariam
 	LinkedQueue<Order*> Waiting_Vegan;
-
+	priQueue<Chief*> Ready_Vegan_chief;
 	priQueue<Order*>In_service_orders;
+
 
 	//Basmala
 
 	ArrayStack<Order*> DeliveredOrders;
 
+	priQueue<Chief*> readyNormalChiefs;
 	///////////////////Bouns/////////////////////////////////
-	priQueue<Chief*> readyNormalChefs;
-	priQueue<Chief*> Ready_Vegan_chief;
-	priQueue<Chief*> VIPChiefs;
+
 	priQueue<Chief*> Ready_Dessert_chief;
 	priQueue<Chief*> Ready_Drink_chief;
-
 
 	LinkedQueue<Order*>Waiting_Dessert;
 	LinkedQueue<Order*>Waiting_Drink;
@@ -59,8 +57,6 @@ public:
 	void updateChiefStatus(int timestep);
 	void  makeChiefready(Chief* ch, int times);
 	void printFTenEvents() const;
-	void OutputFile(const string& filename);
-
 
 	Event* getNextEvent();
 	void addEvent(Event* newEvent);
@@ -81,7 +77,7 @@ public:
 
 	///////////////////Bouns///////////////////////
 	void InjuredChief(Chief* ch, int timestep);
-
+	//////////////////////////////////////////////
 	// nouran
 	bool CancelOrder(int id);
 	Order* GetNormalOrder(int id);
@@ -102,11 +98,12 @@ public:
 	bool Searchfor_available_vegan_chief(Chief* ch);
 	Chief get_next_available_vegan_chief(Node<Chief>* curr_chief);
 	void print_all_available_vegan_chiefs();
-	void PrintVeganOrders() ;
-	void printInServeOrders() ;
+	void PrintVeganOrders();
+	void printInServeOrders();
+	void OutputFile(ofstream& out);
 
 	////////////////////////Bonus/////////////////////
-	
+
 	//Desserts orders
 	bool Insert_dessert_order(Order* des);
 	bool Remove_dessert_order(Order* des);
@@ -133,8 +130,8 @@ public:
 	Chief get_next_available_Drink_chief(Node<Chief>* curr_chief);
 	void print_all_available_Drink_chiefs();
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-    // basmala
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+		// basmala
 	bool addChef(Chief* chef);
 	bool getNextChef(Chief* chef);
 	void printAllVIPChiefs() const;

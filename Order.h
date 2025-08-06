@@ -7,8 +7,12 @@ using namespace std;
 class Order
 {
 private:
-	int OrderID; string OrderType; double price;
-	int Ordersize; int priority; int GT;
+	int OrderID;
+	string OrderType;
+	double price;
+	int Ordersize;
+	int priority;
+	int GT;
 	int requestT; int FinishT;
 	int waitT; int serveT;
 	Chief* assign_chief;

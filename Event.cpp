@@ -6,7 +6,7 @@ using namespace std;
 
 int Event::getEventTime() const
 {
-     return eventTime; 
+    return eventTime;
 }
 
 int Event::getOrderID() const
@@ -20,10 +20,10 @@ void Event::print() const
         << ", Order ID: " << getOrderID() << endl;
 }
 
-string Arrival:: getOrderType() const { 
+string Arrival::getOrderType() const {
     return orderType;
 }
-int Arrival:: getSize() const { 
+int Arrival::getSize() const {
     return size;
 }
 double Arrival::getPrice() const {
@@ -39,7 +39,7 @@ void Arrival::print() const
 {
     Event::print();
     cout << "Type: " << getOrderType() << ", Size: " << size
-        << ", Price: " << getPrice()<<endl;
+        << ", Price: " << getPrice() << endl;
 }
 
 void Arrival::Execute(Restaurant* Rest)
@@ -80,7 +80,7 @@ string Cancel::getType() const
 void Promotion::print() const
 {
     Event::print();
-    cout << "Extra Money: " << extraMoney<<endl;
+    cout << "Extra Money: " << extraMoney << endl;
 }
 
 void Promotion::Execute(Restaurant* Rest) {

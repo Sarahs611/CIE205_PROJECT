@@ -14,16 +14,16 @@ private:
 	bool available;
 	int breakEndT = -1;
 
-////////////BOUNS/////////////////////
+	////////////BOUNS/////////////////////
 	int curr_Speed;
 	bool injured;
 	int inj_RestT;
-	int inj_EndT;  
+	int inj_EndT;
 	bool ComeBackEarly;
 
 public:
 	Chief();
-	Chief(int id,string type, int spd, int ordersBeforeBreak, int breakTime);
+	Chief(int id, string type, int spd, int ordersBeforeBreak, int breakTime);
 	int  getChiefID()const;
 	string getchiefspecialization()const;
 	int  getspeed()const;

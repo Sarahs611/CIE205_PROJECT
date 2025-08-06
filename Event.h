@@ -25,8 +25,8 @@ public:
 
 class Arrival : public Event {
 private:
-	string orderType;  
-	int size; 
+	string orderType;
+	int size;
 	double price;
 public:
 	Arrival(string ordertype, int Size, double Price, int eTime, int orderId) :
@@ -45,22 +45,22 @@ public:
 
 };
 
-class Cancel: public Event{
+class Cancel : public Event {
 
 public:
-	Cancel(int eTime,int orderId): Event(eTime, orderId){}
-	
+	Cancel(int eTime, int orderId) : Event(eTime, orderId) {}
+
 	void print() const override;
 	void Execute(Restaurant* Rest) override;
 	string getType() const override;
 
 };
 
-class Promotion:public Event {
+class Promotion :public Event {
 private:
 	double extraMoney;
 public:
-	Promotion(double extram,int eTime, int orderId) :
+	Promotion(double extram, int eTime, int orderId) :
 		Event(eTime, orderId) {
 		extraMoney = extram;
 	}

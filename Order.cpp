@@ -92,7 +92,7 @@ void Order::calcPriority()
 
 }
 void Order::print() const {
-	cout << "Order ID: " << getOrderID()<< " | Type: " << getOrderType() << " | Price: $" << getPrice()<< " | Size: "
-		<< getOrderSize()<< " | Request Time: " << getRequestT()<< " | Finish Time: " << getFinishT() << endl;
+	cout << "Order ID: " << getOrderID() << " | Type: " << getOrderType() << " | Price: $" << getPrice() << " | Size: "
+		<< getOrderSize() << " | Request Time: " << getRequestT() << " | Finish Time: " << getFinishT() << endl;
 }
 

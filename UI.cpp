@@ -41,6 +41,13 @@ void UI::printCurrentStatus(Restaurant* rest, int timestep)
 
 	cout << "\nAvailable Vegan Chefs:\n";
 	rest->print_all_available_vegan_chiefs();
+	//////Bonus///////
+	cout << "\nAvailable Dessert Chiefs:\n";
+	rest->print_all_available_Dessert_chiefs();
+
+	cout << "\nAvailable Drink Chiefs:\n";
+	rest->print_all_available_Drink_chiefs();
+
 
 	cout << "\nIn Break Chiefs:\n";
 	rest->printInBreakChiefs();

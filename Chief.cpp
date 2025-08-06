@@ -6,7 +6,7 @@ Chief::Chief()
 {
 }
 
-Chief::Chief(int id,string type, int spd, int ordersBeforeBreak, int breakTime)
+Chief::Chief(int id, string type, int spd, int ordersBeforeBreak, int breakTime)
 {
 	Chief_ID = id;
 	chief_specialization = type;
@@ -112,8 +112,8 @@ void Chief::setBreakEndTime(int t)
 }
 
 void Chief::print() const {
-	cout << "Chef ID: " << getChiefID()<< " | Specialization: " << getchiefspecialization() << " | Speed: " << getspeed()
-		<< " | Orders before break: " << getordersbeforebreak()<< " | Break duration: " << getbreakduration()<< endl;
+	cout << "Chef ID: " << getChiefID() << " | Specialization: " << getchiefspecialization() << " | Speed: " << getspeed()
+		<< " | Orders before break: " << getordersbeforebreak() << " | Break duration: " << getbreakduration() << endl;
 }
 
 void Chief::recover(int currentTime) {
