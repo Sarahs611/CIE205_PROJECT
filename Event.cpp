@@ -16,8 +16,9 @@ int Event::getOrderID() const
 
 void Event::print() const
 {
-    cout << "Event Time: " << getEventTime()
-        << ", Order ID: " << getOrderID() << endl;
+    Event* ev = nullptr;
+    cout << "Event Time: " << ev->getEventTime()
+        << ", Order ID: " << ev->getOrderID() << endl;
 }
 
 string Arrival::getOrderType() const {
@@ -32,18 +33,22 @@ double Arrival::getPrice() const {
 
 string Arrival::getType() const
 {
-    return "A";
+    return "R";
 }
 
 void Arrival::print() const
 {
     Event::print();
-    cout << "Type: " << getOrderType() << ", Size: " << size
-        << ", Price: " << getPrice() << endl;
+    Arrival* av = nullptr;
+
+    cout << "Type: " << av->getOrderType() << ", Size: " << av->size
+        << ", Price: " << av->getPrice() << endl;
 }
 
 void Arrival::Execute(Restaurant* Rest)
 {
+
+
     Order* newOrder = new Order();
 
     newOrder->setOrderID(orderID);
@@ -60,6 +65,12 @@ void Arrival::Execute(Restaurant* Rest)
         newOrder->calcPriority();
         Rest->addToVIPWait(newOrder);
     }
+    else if (orderType == "D")
+    {
+        Rest->Insert_dessert_order(newOrder);
+    }
+    else
+        Rest->Insert_Drink_order(newOrder);
 }
 
 void Cancel::print() const
@@ -80,7 +91,9 @@ string Cancel::getType() const
 void Promotion::print() const
 {
     Event::print();
-    cout << "Extra Money: " << extraMoney << endl;
+    Promotion* p = nullptr;
+
+    cout << "Extra Money: " << p->extraMoney << endl;
 }
 
 void Promotion::Execute(Restaurant* Rest) {

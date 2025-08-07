@@ -9,7 +9,6 @@
 
 using namespace std;
 
-
 Restaurant::Restaurant() {
     AutoP = 0;
     totalWT = 0, totalST = 0;
@@ -19,56 +18,65 @@ Restaurant::Restaurant() {
 void Restaurant::SimulationT(int mode)
 {
     int timestep = 1;
+    char input;
+
     if (mode == 2)
         cout << "Silent mode on.\n";
+
     while (!EventsList.isEmpty() || !VIPWaitList.isEmpty() || !WaitNorm.isEmpty()
         || !Waiting_Vegan.isEmpty() || !Waiting_Dessert.isEmpty() || !Waiting_Drink.isEmpty()
-        || !In_service_orders.isEmpty() || !InBreakN.isEmpty()
-        || !InBreakG.isEmpty() || !InBreakVIP.isEmpty() || !InBreakDes.isEmpty() || !InBreakDri.isEmpty())
+        || !In_service_orders.isEmpty())
     {
         ExecuteTimestep(timestep);
+
         if (mode == 1) {
             UI::printCurrentStatus(this, timestep);
-            cout << "PRESS ENTER TO CONTINUE \n";
-            cin.get();
+
+            cout << "\nPress 'Y' if you want to continue: ";
+            cin >> input;
+
+            if (input != 'y' && input != 'Y') {
+                cout << "Simulation stopped\n";
+                break;
+            }
         }
+
         timestep++;
     }
     if (mode == 2)
         cout << "Output file:\n";
-
-
 }
 
 void Restaurant::ExecuteTimestep(int timestep)
 {
     // Execute events
     Event* ev = nullptr;
-    int c = EventsList.getCount();
-    for (int i = 0; i < c; i++)
+    while (EventsList.dequeue(ev))
     {
-        if (!EventsList.peek(ev)) break;
-
+        ev->Execute(this);
+    }
+    while (EventsList.peek(ev) && ev->getEventTime() == timestep)
+    {
+        EventsList.dequeue(ev);
+        ev->Execute(this);
+        delete ev;
+    }
+    /*Event* ev = nullptr;
+    while (EventsList.peek(ev)) {
         if (ev->getEventTime() > timestep)
             break;
 
         EventsList.dequeue(ev);
-        if (ev)
-            ev->Execute(this);
-
+        ev->Execute(this);
         delete ev;
-    }
-
+    }*/
     //for n-orders waited too long 
     checkAutoPromote(timestep);
-
     assignOrders(timestep);
-
     // updateInServiceOrders
     priQueue<Order*> temp;
     Order* order = nullptr;
     int prio;
-
     while (!In_service_orders.isEmpty())
     {
         In_service_orders.dequeue(order, prio);
@@ -82,11 +90,9 @@ void Restaurant::ExecuteTimestep(int timestep)
             deliveredC++;
 
             Chief* c = order->get_assign_chief();
-
             InjuredChief(c, timestep);
-
             if (c->getordersbeforebreak() <= 0 && !c->isInjured()) {
-                // Chef goes to break
+                // Chief goes to break
                 c->setBreakEndTime(timestep + c->getbreakduration());
                 c->set_available(false);
 
@@ -96,6 +102,10 @@ void Restaurant::ExecuteTimestep(int timestep)
                     InBreakG.enqueue(c);
                 else if (c->getchiefspecialization() == "V")
                     InBreakVIP.enqueue(c);
+                else if (c->getchiefspecialization() == "D")
+                    InBreakDes.enqueue(c);
+                else
+                    InBreakDri.enqueue(c);
                 //reset
                 c->setordersbeforebreak(c->getMaxOrdersBeforeBreak());
             }
@@ -141,62 +151,57 @@ void Restaurant::checkAutoPromote(int timestep)
         WaitNorm.enqueue(currentOrder);
     }
 }
+
 void Restaurant::assignOrders(int timestep)
 {
     Order* order = nullptr;
     Chief* chief = nullptr;
-    int prio, cSpeed;
+    int cSpeed;
 
+    //VIP orders
     while (!VIPWaitList.isEmpty())
     {
-        if (!VIPChiefs.isEmpty())
-            VIPChiefs.dequeue(chief, cSpeed);
-        else if (!readyNormalChiefs.isEmpty())
-            readyNormalChiefs.dequeue(chief, cSpeed);
-        else if (!Ready_Vegan_chief.isEmpty())
-            Ready_Vegan_chief.dequeue(chief, cSpeed);
-        else
+        if (!(VIPChiefs.dequeue(chief, cSpeed) || readyNormalChiefs.dequeue(chief, cSpeed) || Ready_Vegan_chief.dequeue(chief, cSpeed) ||
+            Ready_Dessert_chief.dequeue(chief, cSpeed) || Ready_Drink_chief.dequeue(chief, cSpeed)))
+        {
             break;
-
-        VIPWaitList.dequeue(order, prio);
-        assignOrderToChef(order, chief, timestep);
+        }
+        VIPWaitList.dequeue(order, cSpeed);
+        if (order && chief) assignOrderToChef(order, chief, timestep);
     }
 
-    while (!Waiting_Vegan.isEmpty() && !Ready_Vegan_chief.isEmpty())
+    //vegan orders
+    while (!Waiting_Vegan.isEmpty() && Ready_Vegan_chief.dequeue(chief, cSpeed))
     {
         Waiting_Vegan.dequeue(order);
-        Ready_Vegan_chief.dequeue(chief, cSpeed);
-        assignOrderToChef(order, chief, timestep);
+        if (order && chief) assignOrderToChef(order, chief, timestep);
     }
 
+    //normal orders
     while (!WaitNorm.isEmpty())
     {
-        if (!readyNormalChiefs.isEmpty())
-            readyNormalChiefs.dequeue(chief, cSpeed);
-        else if (!VIPChiefs.isEmpty())
-            VIPChiefs.dequeue(chief, cSpeed);
-        else
-            break; // no chef
+        if (readyNormalChiefs.dequeue(chief, cSpeed)) {}
+        else if (VIPChiefs.dequeue(chief, cSpeed)) {}
+        else break;
 
         WaitNorm.dequeue(order);
-        assignOrderToChef(order, chief, timestep);
+        if (order && chief) assignOrderToChef(order, chief, timestep);
     }
 
-    while (!Waiting_Dessert.isEmpty() && !Ready_Dessert_chief.isEmpty())
+    //dessert orders
+    while (!Waiting_Dessert.isEmpty() && Ready_Dessert_chief.dequeue(chief, cSpeed))
     {
         Waiting_Dessert.dequeue(order);
-        Ready_Dessert_chief.dequeue(chief, cSpeed);
-        assignOrderToChef(order, chief, timestep);
+        if (order && chief) assignOrderToChef(order, chief, timestep);
     }
 
-    while (!Waiting_Drink.isEmpty() && !Ready_Drink_chief.isEmpty())
+    //drink orders
+    while (!Waiting_Drink.isEmpty() && Ready_Drink_chief.dequeue(chief, cSpeed))
     {
         Waiting_Drink.dequeue(order);
-        Ready_Drink_chief.dequeue(chief, cSpeed);
-        assignOrderToChef(order, chief, timestep);
+        if (order && chief) assignOrderToChef(order, chief, timestep);
     }
 }
-
 void Restaurant::assignOrderToChef(Order* order, Chief* chef, int timestep)
 {
     order->setAssignT(timestep); // GT
@@ -237,10 +242,10 @@ void Restaurant::makeChiefready(Chief* ch, int time)
     else if (ch->getchiefspecialization() == "G")
         Ready_Vegan_chief.enqueue(ch, Speed);
     //Bonus
-    else if (ch->getchiefspecialization() == "Des")
+    else if (ch->getchiefspecialization() == "D")
         Ready_Dessert_chief.enqueue(ch, ch->getspeed());
 
-    else if (ch->getchiefspecialization() == "Dri")
+    else if (ch->getchiefspecialization() == "K")
         Ready_Drink_chief.enqueue(ch, ch->getspeed());
     else
         VIPChiefs.enqueue(ch, Speed);
@@ -368,6 +373,7 @@ void Restaurant::printFTenEvents() const
 }
 
 /////////////////////////////////\/\/\/\/\/\/\////////////////////////////////////////////
+
 void Restaurant::addEvent(Event* newEvent) {
     EventsList.enqueue(newEvent);
 }
@@ -399,6 +405,8 @@ Order* Restaurant::getNextVIPOrder() {
     return nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+
 void Restaurant::addToVIPWait(Order* pOrder) {
     if (pOrder->getOrderType() == "V") {
         VIPWaitList.enqueue(pOrder, pOrder->getPriority());
@@ -409,9 +417,24 @@ int Restaurant::countVIPOrders() const {
     return VIPWaitList.getCount();
 }
 
-void Restaurant::printVIPOrders() const
+void Restaurant::printVIPOrders()
 {
-    VIPWaitList.print();
+    Order* vo;
+    int pr;
+    priQueue<Order*> temp;
+
+    while (!VIPWaitList.isEmpty())
+    {
+        VIPWaitList.dequeue(vo, pr);
+        vo->print();
+        temp.enqueue(vo, pr);
+
+    }
+    while (!temp.isEmpty())
+    {
+        temp.dequeue(vo, pr);
+        VIPWaitList.enqueue(vo, pr);
+    }
 }
 
 
@@ -458,11 +481,11 @@ Chief* Restaurant::getChiefInBreak(string chiefType) {
         InBreakVIP.dequeue(chiefInBreak);
     }
     //Bonus
-    else if (chiefType == "Des" && !InBreakDes.isEmpty())
+    else if (chiefType == "D" && !InBreakDes.isEmpty())
     {
         InBreakDes.dequeue(chiefInBreak);
     }
-    else if (chiefType == "Dri" && !InBreakDri.isEmpty())
+    else if (chiefType == "K" && !InBreakDri.isEmpty())
     {
         InBreakDri.dequeue(chiefInBreak);
     }
@@ -481,34 +504,171 @@ void Restaurant::addChiefToBreak(Chief* Chief) {
         InBreakVIP.enqueue(Chief);
     }
     //Bonus
-    else if (type == "Des")
+    else if (type == "D")
     {
         InBreakDes.enqueue(Chief);
     }
-    else if (type == "Dri")
+    else if (type == "K")
     {
         InBreakDri.enqueue(Chief);
     }
 }
 
+void Restaurant::LoadInputFile(string fileName) {
+    ifstream inputFile(fileName);
+    if (!inputFile.is_open()) {
+        cout << "Could not open the file." << endl;
+        return;
+    }
+
+    int nNormal, nVegan, nVIP, nDes, nDri;
+    inputFile >> nNormal >> nVegan >> nVIP >> nDes >> nDri;
+
+
+    int sNormal, sVegan, sVIP, sDes, sDri;
+    inputFile >> sNormal >> sVegan >> sVIP >> sDes >> sDri;
+
+    // Break 
+    int BO, BN, BG, BV, BDes, BDri;
+    inputFile >> BO >> BN >> BG >> BV >> BDes >> BDri;
+
+
+    inputFile >> AutoP;
+
+    for (int i = 0; i < nNormal; i++) {
+        Chief* ch = new Chief(i + 1, "N", sNormal, BO, BN);
+        readyNormalChiefs.enqueue(ch, ch->getspeed());
+    }
+    for (int i = 0; i < nVegan; i++) {
+        Chief* ch = new Chief(i + 1, "G", sVegan, BO, BG);
+        Ready_Vegan_chief.enqueue(ch, ch->getspeed());
+    }
+    for (int i = 0; i < nVIP; i++) {
+        Chief* ch = new Chief(i + 1, "V", sVIP, BO, BV);
+        VIPChiefs.enqueue(ch, ch->getspeed());
+    }
+    for (int i = 0; i < nDes; i++) {
+        Chief* ch = new Chief(i + 1, "D", sDes, BO, BDes);
+        Ready_Dessert_chief.enqueue(ch, ch->getspeed());
+    }
+    for (int i = 0; i < nDri; i++) {
+        Chief* ch = new Chief(i + 1, "K", sDri, BO, BDri);
+        Ready_Drink_chief.enqueue(ch, ch->getspeed());
+    }
+    int numEvents;
+    inputFile >> numEvents;
+
+    for (int i = 0; i < numEvents; i++) {
+        string eType;
+        inputFile >> eType;
+
+        Event* ev = nullptr;
+
+        if (eType == "R") {
+            string oType;
+            int ts, id, size;
+            double money;
+            inputFile >> oType >> ts >> id >> size >> money;
+            ev = new Arrival(oType, size, money, ts, id);
+        }
+        else if (eType == "X") {
+            int ts, id;
+            inputFile >> ts >> id;
+            ev = new Cancel(ts, id);
+        }
+        else if (eType == "P") {
+            int ts, id;
+            double extra;
+            inputFile >> ts >> id >> extra;
+            ev = new Promotion(extra, ts, id);
+        }
+
+        if (ev) {
+            EventsList.enqueue(ev);
+        }
+    }
+    cout << "DEBUG: Loaded " << EventsList.getCount() << " events\n";
+    inputFile.close();
+}
 int Restaurant::countInBreakChiefs() const
 {
     return InBreakN.getCount() + InBreakG.getCount() + InBreakVIP.getCount() + InBreakDes.getCount() + InBreakDri.getCount();
 }
-void Restaurant::printInBreakChiefs() const {
+void Restaurant::printInBreakChiefs()
+{
+    Chief* c;
+    LinkedQueue<Chief*> tempN;
+    cout << "Normal Chiefs in Break:\n";
+    while (!InBreakN.isEmpty())
+    {
+        InBreakN.dequeue(c);
+        tempN.enqueue(c);
+        c->print();
+    }
+    while (!tempN.isEmpty())
+    {
+        tempN.dequeue(c);
+        InBreakN.enqueue(c);
+    }
 
-    cout << "In-Break normal Chiefs\n"; InBreakN.Print();
+    LinkedQueue<Chief*> tempG;
+    cout << "Vegan Chiefs in Break:\n";
+    while (!InBreakG.isEmpty())
+    {
+        InBreakG.dequeue(c);
+        tempG.enqueue(c);
+        c->print();
+    }
+    while (!tempG.isEmpty())
+    {
+        tempG.dequeue(c);
+        InBreakG.enqueue(c);
+    }
 
-    cout << "in-Break vegan Chiefs\n"; InBreakG.Print();
+    LinkedQueue<Chief*> tempV;
+    cout << "VIP Chiefs in Break:\n";
+    while (!InBreakVIP.isEmpty())
+    {
+        InBreakVIP.dequeue(c);
+        tempV.enqueue(c);
+        c->print();
 
-    cout << "In-Break VIP Chiefs\n"; InBreakVIP.Print();
-    //Bonus
-    cout << "In-Break Dessert Chiefs\n"; InBreakDes.Print();
+    }
+    while (!tempV.isEmpty())
+    {
+        tempV.dequeue(c);
+        InBreakVIP.enqueue(c);
+    }
 
-    cout << "In - Break Drink Chiefs\n"; InBreakDri.Print();
+    LinkedQueue<Chief*> tempD;
+    cout << "Dessert Chiefs in Break:\n";
+    while (!InBreakDes.isEmpty())
+    {
+        InBreakDes.dequeue(c);
+        tempD.enqueue(c);
+        c->print();
+    }
+    while (!tempD.isEmpty())
+    {
+        tempD.dequeue(c);
+        InBreakDes.enqueue(c);
+    }
 
+    LinkedQueue<Chief*> tempDr;
+    cout << "Drink Chiefs in Break:\n";
+    while (!InBreakDri.isEmpty())
+    {
+        InBreakDri.dequeue(c);
+        tempDr.enqueue(c);
+        c->print();
+
+    }
+    while (!tempDr.isEmpty())
+    {
+        tempDr.dequeue(c);
+        InBreakDri.enqueue(c);
+    }
 }
-
 ////////Bonus////////
 void Restaurant::InjuredChief(Chief* ch, int timestep)
 {
@@ -570,50 +730,12 @@ Order* Restaurant::GetNormalOrder(int id)
     return foundOrder;
 }
 
-void Restaurant::LoadInputFile(string fileName) {
-    ifstream inputFile;
-    inputFile.open(fileName);
-
-    if (!inputFile.is_open()) {
-        cout << "Could not open the file." << endl;
-        return;
-    }
-
-    int nNormal, nVegan, nVIP;
-    inputFile >> nNormal >> nVegan >> nVIP;
-
-    int sNormal, sVegan, sVIP;
-    inputFile >> sNormal >> sVegan >> sVIP;
-
-
-    inputFile >> AutoP;
-
-    for (int i = 0; i < nNormal; i++) {
-        int bAfter, bTime;
-        inputFile >> bAfter >> bTime;
-        Chief* ch = new Chief(i + 1, "N", sNormal, bAfter, bTime);
-        readyNormalChiefs.enqueue(ch, ch->getspeed());
-    }
-    for (int i = 0; i < nVegan; i++) {
-        int bAfter, bTime;
-        inputFile >> bAfter >> bTime;
-        Chief* ch = new Chief(i + 1, "G", sVegan, bAfter, bTime);
-        Ready_Vegan_chief.enqueue(ch, ch->getspeed());
-    }
-    for (int i = 0; i < nVIP; i++) {
-        int bAfter, bTime;
-        inputFile >> bAfter >> bTime;
-        Chief* ch = new Chief(i + 1, "V", sVIP, bAfter, bTime);
-        VIPChiefs.enqueue(ch, ch->getspeed());
-    }
-    inputFile.close();
-}
 
 void Restaurant::PrintReadyNormalChefs() {
     LinkedQueue<Chief*> tempQueue;
     Chief* chefPtr = nullptr;
     int cSpeed;
-    cout << "Ready Normal Chefs:\n";
+    cout << "Ready Normal Chiefs:\n";
 
     while (!readyNormalChiefs.isEmpty()) {
         readyNormalChiefs.dequeue(chefPtr, cSpeed);
@@ -635,7 +757,8 @@ void  Restaurant::PrintNormalOrders()const {
 
     while (!temp.isEmpty()) {
         temp.dequeue(current);
-        cout << "Order ID: " << current->getOrderID() << endl;
+        current->print();
+
     }
 }
 
@@ -711,8 +834,9 @@ void Restaurant::PrintVeganOrders()
     while (!Waiting_Vegan.isEmpty())
     {
         Waiting_Vegan.dequeue(vo);
-        temp.enqueue(vo);
         vo->print();
+        temp.enqueue(vo);
+
     }
     while (!temp.isEmpty())
     {
@@ -801,7 +925,7 @@ void Restaurant::print_all_available_vegan_chiefs()
     while (Ready_Vegan_chief.dequeue(ch, cSpeed))
     {
         temp.enqueue(ch);
-        cout << " Chief : " << ch->getChiefID() << endl;
+        ch->print();
     }
     while (temp.dequeue(ch))
     {
@@ -855,12 +979,12 @@ void Restaurant::OutputFile(ofstream& out)
 {
     if (DeliveredOrders.isEmpty())
     {
-        cout << "No delivered orders.\n";
+        out << "No delivered orders.\n";
         return;
     }
     ArrayStack<Order*> tempStack;
-    Order* tempOrder;
-    cout << "Delivered Orders (Most recent first):\n";
+    Order* tempOrder = nullptr;
+    out << "Delivered Orders (Most recent first):\n";
     int count_vegano = 0;
     int count_normalo = 0;
     int count_VIPo = 0;
@@ -873,20 +997,21 @@ void Restaurant::OutputFile(ofstream& out)
     int count_dessertc = Ready_Dessert_chief.getCount();
     int totalchiefs = count_veganc + count_normalc + count_VIPc + count_drinkc + count_dessertc;
     int count_total_delivered = 0;
-    int totalWaiting = 0;
-    int totalserve = 0;
+    double totalWaiting = 0;
+    double totalserve = 0;
     float avgwaiting = 0;
     float avgserve = 0;
     while (!DeliveredOrders.isEmpty())
     {
         DeliveredOrders.pop(tempOrder);
-        cout << "FT: " << tempOrder->getFinishT()
+        out << "FT: " << tempOrder->getFinishT()
             << " | ID: " << tempOrder->getOrderID()
             << " | RT: " << tempOrder->getRequestT()
             << " | GT: " << tempOrder->getAssignT()
             << " | WT: " << tempOrder->getWaitingT()
             << " | ST: " << tempOrder->getServeT() << "\n";
-
+        out << "---------------------------------------------------------";
+        out << endl;
         count_total_delivered++;
         if (tempOrder->getOrderType() == "G")
         {
@@ -900,14 +1025,16 @@ void Restaurant::OutputFile(ofstream& out)
         {
             count_normalo++;
         }
-        else if (tempOrder->getOrderType() == "Des")
+        else if (tempOrder->getOrderType() == "D")
         {
             count_desserto++;
         }
-        else
+        else if (tempOrder->getOrderType() == "K")
         {
             count_drinko++;
         }
+        else
+            return;
         totalWaiting += tempOrder->getWaitingT();
         totalserve += tempOrder->getServeT();
 
@@ -924,12 +1051,12 @@ void Restaurant::OutputFile(ofstream& out)
         avgwaiting = totalWaiting / count_total_delivered;
         avgserve = totalserve / count_total_delivered;
     }
-    cout << "Orders : " << count_total_delivered << "[" << "Norm :" << count_normalo << "," << "Veg :" << count_vegano << "," << "VIP :"
+    out << "Orders : " << count_total_delivered << "[" << "Norm :" << count_normalo << "," << "Veg :" << count_vegano << "," << "VIP :"
         << count_VIPo << "," << "Dessert :" << count_desserto << "," << "Drink :" << count_drinko << "]" << endl;
-    cout << "Chiefs : " << totalchiefs << "[" << "Norm :" << count_normalc << "," << "Veg :" << count_veganc << "," << "VIP :" << count_VIPc << ","
+    out << "Chiefs : " << totalchiefs << "[" << "Norm :" << count_normalc << "," << "Veg :" << count_veganc << "," << "VIP :" << count_VIPc << ","
         << "Dessert : " << count_dessertc << "," << "Drink :" << count_drinkc << "]" << endl;
-    cout << "Avgwait = " << avgwaiting << "," << "Avgserve = " << avgserve << endl;
-    cout << "Auto_promoted : " << AutoP << " %" << endl;
+    out << "Avgwait = " << avgwaiting << "," << "Avgserve = " << avgserve << endl;
+    out << "Auto_promoted : " << AutoP << " %" << endl;
 }
 ////////////////////bouns/////////////////////////////////////////////////
 
@@ -1154,8 +1281,9 @@ void Restaurant::print_all_available_Dessert_chiefs()
     }
     while (Ready_Dessert_chief.dequeue(ch, cSpeed))
     {
-        temp.enqueue(ch, ch->getspeed());
         ch->print();
+        temp.enqueue(ch, ch->getspeed());
+
     }
     while (temp.dequeue(ch, cSpeed))
     {
@@ -1234,8 +1362,9 @@ void Restaurant::print_all_available_Drink_chiefs()
     }
     while (Ready_Drink_chief.dequeue(ch, cSpeed))
     {
-        temp.enqueue(ch, ch->getspeed());
         ch->print();
+        temp.enqueue(ch, ch->getspeed());
+
     }
     while (temp.dequeue(ch, cSpeed))
     {
@@ -1272,17 +1401,17 @@ void Restaurant::printAllVIPChiefs() const {
     priQueue<Chief*> tempQueue = VIPChiefs;
     Chief* temp = nullptr;
     int cSpeed;
-    cout << "Available VIP Chefs:\n";
+    cout << "Available VIP Chiefs:\n";
     while (tempQueue.dequeue(temp, cSpeed)) {
-        cout << "ChefID: " << temp->getChiefID()
-            << " | Speed: " << temp->getspeed()
-            << " | Available: " << (temp->get_available() ? "Yes" : "No") << "\n";
+        temp->print();
     }
 }
 
 //delivered Orders
-bool Restaurant::push(Order* order) {
-    return DeliveredOrders.push(order);
+bool Restaurant::push(Order* order)
+{
+    DeliveredOrders.push(order);
+    return true;
 }
 
 ArrayStack<Order*>& Restaurant::getDeliveredOrders()

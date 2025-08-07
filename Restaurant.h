@@ -66,14 +66,14 @@ public:
 	Order* getNextVIPOrder();
 	void addToVIPWait(Order* pOrder);
 	int  countVIPOrders()const;
-	void printVIPOrders()const;
+	void printVIPOrders();
 	bool cancelEvent(int id);
 	bool promoteOrder(int orderID, double extraMoney);
 
 	Chief* getChiefInBreak(string chiefType);
 	void addChiefToBreak(Chief* pChief);
 	int  countInBreakChiefs()const;
-	void printInBreakChiefs()const;
+	void printInBreakChiefs();
 
 	///////////////////Bouns///////////////////////
 	void InjuredChief(Chief* ch, int timestep);

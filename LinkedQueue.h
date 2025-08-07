@@ -170,15 +170,6 @@ bool LinkedQueue<T>:: peek(T& frntEntry) const
 ///////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-void LinkedQueue<T>:: Print() const  {
-	Node<T>* current = frontPtr;
-	while (current != nullptr) {
-		current->getItem()->print() ;
-		current = current->getNext();
-	}
-	cout << endl;
-}
-template <typename T>
 int LinkedQueue<T>::getCount() const {
 	int count = 0;
 	Node<T>* current = frontPtr;
