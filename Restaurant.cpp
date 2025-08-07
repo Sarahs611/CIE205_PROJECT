@@ -205,7 +205,7 @@ void Restaurant::assignOrders(int timestep)
 void Restaurant::assignOrderToChef(Order* order, Chief* chef, int timestep)
 {
     order->setAssignT(timestep); // GT
-    order->setWaititngT(timestep - order->getRequestT()); //WT = GT - RT
+    order->setWaititngT(order->getRequestT()- timestep);
 
     int ST = (int)ceil((double)order->getOrderSize() / chef->getcurrSpeed());
     order->setServeT(ST);
@@ -378,7 +378,7 @@ void Restaurant::addEvent(Event* newEvent) {
     EventsList.enqueue(newEvent);
 }
 
-void Restaurant::printEvents() const
+void Restaurant::printEvents() 
 {
     EventsList.Print();
 }

@@ -111,9 +111,15 @@ void Chief::setBreakEndTime(int t)
 	breakEndT = t;
 }
 
-void Chief::print() const {
-	cout << "Chef ID: " << getChiefID() << " | Specialization: " << getchiefspecialization() << " | Speed: " << getspeed()
-		<< " | Orders before break: " << getordersbeforebreak() << " | Break duration: " << getbreakduration() << endl;
+void Chief::print() const
+{
+
+	cout << " Chief ID : " << getChiefID() << endl;
+	cout << "Available : " << get_available() << endl;
+	cout << "Chief Specialaization : " << getchiefspecialization() << endl;
+	cout << "Chief speed :" << getspeed() << endl;
+	cout << "Order before break :" << getordersbeforebreak() << endl;
+	cout << "Break duration :" << getbreakduration() << endl;
 }
 
 void Chief::recover(int currentTime) {

@@ -60,7 +60,7 @@ public:
 
 	Event* getNextEvent();
 	void addEvent(Event* newEvent);
-	void printEvents()const;
+	void printEvents();
 	int countEvents() const;
 
 	Order* getNextVIPOrder();

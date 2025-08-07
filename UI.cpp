@@ -32,8 +32,6 @@ void UI::printCurrentStatus(Restaurant* rest, int timestep)
 	cout << "\nDelivered Orders:\n";
 	rest->printAll_delivered_order();
 
-
-	cout << "\nAvailable VIP Chiefs:\n";
 	rest->printAllVIPChiefs();
 
 	cout << "\nAvailable Normal Chiefs:\n";

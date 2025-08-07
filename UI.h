@@ -3,8 +3,6 @@
 
 class UI
 {
-private:
-
 public:
 	static int selectMode();
 	static void printCurrentStatus(Restaurant* rest, int timestep);

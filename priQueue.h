@@ -14,7 +14,7 @@ public:
     ~priQueue() {
         T tmp;
         int p;
-        while (dequeue(tmp,p));
+        while (dequeue(tmp, p));
     }
 
     //insert the new node in its correct position according to its priority
@@ -22,18 +22,18 @@ public:
         priNode<T>* newNode = new priNode<T>(data, priority);
 
         if (head == nullptr || priority > head->getPri()) {
-            
+
             newNode->setNext(head);
             head = newNode;
             return;
         }
-       
-        priNode<T>* current = head;        
+
+        priNode<T>* current = head;
         while (current->getNext() && priority <= current->getNext()->getPri()) {
             current = current->getNext();
         }
-        newNode->setNext( current->getNext());
-        current->setNext( newNode);        
+        newNode->setNext(current->getNext());
+        current->setNext(newNode);
     }
 
     bool dequeue(T& topEntry, int& pri) {
@@ -69,5 +69,11 @@ public:
         }
         return count;
     }
-  
+    void print() const {
+        priNode<T>* current = head;
+        while (current) {
+            cout << current->getItem() << endl;
+            current = current->getNext();
+        }
+    }
 };

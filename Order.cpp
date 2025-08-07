@@ -91,7 +91,9 @@ void Order::calcPriority()
 	priority = (price / Ordersize) + (100 - requestT);
 
 }
-void Order::print() const {
+void Order::print() const
+{
+
 	cout << "Order ID: " << getOrderID() << " | Type: " << getOrderType() << " | Price: $" << getPrice() << " | Size: "
 		<< getOrderSize() << " | Request Time: " << getRequestT() << " | Finish Time: " << getFinishT() << endl;
 }
